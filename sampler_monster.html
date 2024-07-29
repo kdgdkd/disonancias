@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    <title>Sampler / Monster</title>
+    <style>
+        body {
+            font-family: 'Special Elite';
+            text-align: center;
+            margin: 50px;
+            background-color: #5a5a5a;
+        }
+        .creepster-regular {
+        font-family: "Creepster", system-ui;
+        font-weight: 400;
+        font-style: normal;
+        }
+        .special-elite-regular {
+        font-family: "Special Elite", system-ui;
+        font-weight: 400;
+        font-style: normal;
+        }
+
+        .box {
+            background-color: #adadad;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+        }
+        h1 {
+            
+            color: #fff;
+            font-family: 'Creepster';
+            font-size: 38px;
+        }
+
+        button {
+            font-family: 'Special Elite';
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:active {
+            background-color: #a9a9a9;
+        }
+        button.disabled {
+            background-color: #d3d3d3;
+            cursor: not-allowed;
+        }
+        .slider-container {
+            margin: 10px 0;
+        }
+        .filter-radio, .sample-length {
+            margin: 10px 0;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 15px;
+            -webkit-appearance: none;
+            background: #555;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #888;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            width: 100%;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .footer-link {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sampler / Monster</h1>
+
+    <div class="box">
+        <button id="recordButton">Record</button>
+        <div class="sample-length">
+            <label>Sample Length:</label><br>
+            <label><input type="radio" name="sampleLength" value="1" checked> 1s</label>
+            <label><input type="radio" name="sampleLength" value="2"> 2s</label>
+            <label><input type="radio" name="sampleLength" value="3"> 3s</label>
+            <label><input type="radio" name="sampleLength" value="4"> 4s</label>
+        </div>
+        <div>
+            <button id="playButton" class="disabled" disabled>Play</button>
+            <button id="loopButton" class="disabled" disabled>Loop</button>
+        </div>
+        <div class="slider-container">
+            <label for="volumeControl">Volume:</label>
+            <input type="range" id="volumeControl" min="0" max="1" value="1" step="0.01">
+        </div>
+    </div>
+
+    <div class="box">
+        <h3>Filter</h3>
+        <div class="filter-radio">
+            <label><input type="radio" name="filterType" value="lowpass" checked> Low</label>
+            <label><input type="radio" name="filterType" value="highpass"> High</label>
+            <label><input type="radio" name="filterType" value="bandpass"> Band</label>
+        </div>
+        <div class="slider-container">
+            <label for="filterFrequency">Cutoff:</label>
+            <input type="range" id="filterFrequency" min="20" max="20000" value="3500">
+        </div>
+        <div class="slider-container">
+            <label for="filterResonance">Resonance:</label>
+            <input type="range" id="filterResonance" min="0.1" max="20" value="1" step="0.1">
+        </div>
+    </div>
+
+    <div class="box">
+        <h3>Delay</h3>
+        <div class="slider-container">
+            <label for="delayTime">Time:</label>
+            <input type="range" id="delayTime" min="0" max="5" value="0.5" step="0.1">
+        </div>
+        <div class="slider-container">
+            <label for="feedbackAmount">Feedback:</label>
+            <input type="range" id="feedbackAmount" min="0" max="1" value="0.5" step="0.01">
+        </div>
+        <div class="slider-container">
+            <label for="dryWetMix">Dry/Wet Mix:</label>
+            <input type="range" id="dryWetMix" min="0" max="1" value="0.5" step="0.01">
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" class="footer-link">kdg/dkd</a>
+        <a href="demoras.html" class="footer-link">➔ demoras</a>
+    </div>
+    <script>
+        let audioContext;
+        let mediaRecorder;
+        let audioChunks = [];
+        let recordedBuffer;
+        let sourceNode;
+        let filterNode;
+        let delayNode;
+        let feedbackGainNode;
+        let isLooping = false;
+
+        // Set default sample length
+        let sampleLength = 3000; // Default to 3 seconds
+
+        // Update sample length based on radio selection
+        document.querySelectorAll('input[name="sampleLength"]').forEach((radio) => {
+            radio.onchange = () => {
+                sampleLength = radio.value * 1000; // Convert to milliseconds
+            };
+        });
+
+        document.getElementById("recordButton").onclick = async () => {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                recordedBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                audioChunks = [];
+
+                // Enable Play and Loop buttons after recording
+                document.getElementById("playButton").classList.remove("disabled");
+                document.getElementById("playButton").disabled = false;
+                document.getElementById("loopButton").classList.remove("disabled");
+                document.getElementById("loopButton").disabled = false;
+            };
+
+            mediaRecorder.start();
+            document.getElementById("recordButton").style.backgroundColor = "#a9a9a9"; // Darker color
+            setTimeout(() => {
+                mediaRecorder.stop();
+                document.getElementById("recordButton").style.backgroundColor = ""; // Reset color
+            }, sampleLength); // Record for selected length
+        };
+
+        document.getElementById("playButton").onclick = () => {
+            if (recordedBuffer) {
+                playSound();
+                document.getElementById("playButton").style.backgroundColor = "#a9a9a9"; // Darker color
+                setTimeout(() => {
+                    document.getElementById("playButton").style.backgroundColor = ""; // Reset color
+                }, 3000); // Duration of the sound
+            }
+        };
+
+        document.getElementById("loopButton").onclick = () => {
+            isLooping = !isLooping;
+            if (isLooping) {
+                playSound(true);
+                document.getElementById("loopButton").style.backgroundColor = "#a9a9a9"; // Darker color
+            } else {
+                if (sourceNode) {
+                    sourceNode.stop();
+                }
+                document.getElementById("loopButton").style.backgroundColor = ""; // Reset color
+            }
+        };
+
+        function playSound(loop = false) {
+            sourceNode = audioContext.createBufferSource();
+            filterNode = audioContext.createBiquadFilter();
+            delayNode = audioContext.createDelay();
+            feedbackGainNode = audioContext.createGain();
+
+            // Set filter type and parameters
+            filterNode.type = document.querySelector('input[name="filterType"]:checked').value;
+            filterNode.frequency.value = document.getElementById("filterFrequency").value;
+            filterNode.Q.value = document.getElementById("filterResonance").value;
+
+            // Set delay and feedback
+            delayNode.delayTime.value = document.getElementById("delayTime").value;
+            feedbackGainNode.gain.value = document.getElementById("feedbackAmount").value;
+
+            // Connect nodes
+            sourceNode.buffer = recordedBuffer;
+
+            // Volume control
+            const volumeGainNode = audioContext.createGain();
+            volumeGainNode.gain.value = document.getElementById("volumeControl").value;
+
+            // Connect the audio nodes
+            sourceNode.connect(volumeGainNode);
+            volumeGainNode.connect(filterNode);
+            filterNode.connect(delayNode);
+            delayNode.connect(feedbackGainNode);
+            feedbackGainNode.connect(delayNode); // Feedback loop
+            feedbackGainNode.connect(audioContext.destination); // Output
+
+            // Start playback
+            sourceNode.start(0);
+            if (loop) {
+                sourceNode.loop = true;
+            }
+        }
+
+        // Event listeners for sliders
+        document.getElementById("filterFrequency").oninput = (event) => {
+            if (filterNode) {
+                filterNode.frequency.value = event.target.value;
+            }
+        };
+
+        document.getElementById("filterResonance").oninput = (event) => {
+            if (filterNode) {
+                filterNode.Q.value = event.target.value;
+            }
+        };
+
+        document.getElementById("delayTime").oninput = (event) => {
+            if (delayNode) {
+                delayNode.delayTime.value = event.target.value;
+            }
+        };
+
+        document.getElementById("feedbackAmount").oninput = (event) => {
+            if (feedbackGainNode) {
+                feedbackGainNode.gain.value = event.target.value;
+            }
+        };
+
+        document.getElementById("volumeControl").oninput = (event) => {
+            if (sourceNode) {
+                const volumeGainNode = audioContext.createGain();
+                volumeGainNode.gain.value = event.target.value;
+                sourceNode.connect(volumeGainNode);
+                volumeGainNode.connect(audioContext.destination);
+            }
+        };
+    </script>
+
+</body>
+</html>

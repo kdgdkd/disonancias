@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Síntesis desordenada">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XYnte</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            /* height: 100vh; */
+            margin: 0;
+            background-color: #121c2b;
+            font-family: "Audiowide", sans-serif;
+            color: #eee;
+        }
+
+        #oscillatorBox {
+            position: relative;
+            margin-top: 15px;
+            width: 400px;
+            height: 400px;
+            background-color: #2d5180;
+            border: 1px solid #030027;
+            margin-bottom: 20px;
+            animation: pulsate 0.8s infinite alternate;
+        }
+
+        @keyframes pulsate {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0.8;
+            }
+        }
+        #oscillatorBox::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom left, transparent 49.5%, #45518f 49.5%, #45518f 50.5%, transparent 50.5%);
+            z-index: 1;
+        }
+
+        #startStopBtn {
+            /* position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%); */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #2b3b51;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            color:#f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            color:#f0f0f0;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            /* justify-content: space-between; */
+            padding: 15px;
+            background-color: #2d5180;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 90%;
+        }
+
+        .containercontr {
+            /* color:#f0f0f0; */
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            /* margin-top: 20px; */
+            padding: 15px;
+            width: 90%;
+        } 
+        .filtercontrols {
+            color:#f0f0f0;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: #2d5180;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 90%;
+        }
+
+        #main-container {
+            display: flex;
+            justify-content: space-around;
+            width: 600px;
+            margin: 0 auto;
+            background-color: #2b3b51;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls input[type="range"],
+        .filtercontrols input[type="range"] {
+            width: 90%; /* Adjust the width as needed */
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        #filterContainer {
+            color:#f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border: 1px solid #7d7d7d;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #filterType {
+            width: 80%;
+            margin-top: 10px;
+            background-color: #555;
+            border: 1px solid #666;
+            color: #eee;
+            text-align: center;
+        }
+
+        #filterFrequency {
+            width: 80%;
+            margin-top: 10px;
+            background-color: #555;
+            border: 1px solid #666;
+            color: #eee;
+            text-align: center;
+        }
+
+        #filterResonance {
+            width: 80%;
+            margin-top: 10px;
+            background-color: #555;
+            border: 1px solid #666;
+            color: #eee;
+            text-align: center;
+        }
+
+        #clickedPoint {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: rgb(255, 255, 255);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 11;
+        }
+        button {
+            
+            font-family: "Audiowide", sans-serif;
+        }
+        a {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Use the default text color */
+        }
+
+        footer  {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            text-align: center;
+            justify-content: center;
+            font-size: small;
+
+
+        }
+
+        @media (max-width: 600px) {
+            .container,
+            .filtercontrols {
+                width: 100%;
+            }
+            #main-container {
+                width: 90%;
+            }
+            .containercontr,
+            .controls,
+            .filtercontrols {
+                width:80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 onclick="alert('x,y-nte es un sintetizador con dos osciladores, cuyas frecuencias las determinan las coordenadas del punto seleccionado en la caja.')">x,y-nte</h1>
+    
+    <button id="startStopBtn">Va</button>
+
+    <div id="oscillatorBox">
+        <div id="clickedPoint"></div>
+    </div>
+
+
+    <div id="main-container">
+        <!-- <div class="container"> -->
+        <div class="containercontr">
+            <label>Osciladores</label>
+            <div class="controls">
+                <label>Osc 1</label>
+                <br>
+                <label for="waveform1">Onda:</label>
+                <select id="waveform1">
+                    <option value="sine">Sinusoidal</option>
+                    <option value="square">Cuadrada</option>
+                    <option value="sawtooth">Sierra</option>
+                    <option value="triangle">Triangular</option>
+                </select>
+                <br>
+                <!-- <label for="gain1">Vol:</label> -->
+                <input type="range" id="gain1" min="0" max="1" step="0.01" value="0.5">
+            </div>
+            <div class="controls">
+                <label>Osc 2</label>
+                <br>
+                <label for="waveform2">Onda:</label>
+                <select id="waveform2">
+                    <option value="sine">Sinusoidal</option>
+                    <option value="square">Cuadrada</option>
+                    <option value="sawtooth">Sierra</option>
+                    <option value="triangle">Triangular</option>
+                </select>
+                <br>
+                <!-- <label for="gain2">Vol:</label> -->
+                <input type="range" id="gain2" min="0" max="1" step="0.01" value="0.5">
+        </div>
+        </div>
+
+        <div class="containercontr">
+            <label>Filtro</label>
+            <div class="filtercontrols">
+                <label for="filterType">Tipo:</label>
+                <select id="filterType">
+                    <option value="lowpass">Paso Bajo</option>
+                    <option value="highpass">Paso Alto</option>
+                    <!-- Add other filter types as needed -->
+                </select>
+            </div>
+
+            <div class="filtercontrols">
+                <label for="filterFrequency">Frecuencia:</label>
+                <input id="filterFrequency" type="range" min="20" max="2000" step="10" value="1000">
+
+            <!-- </div>
+            <div class="filtercontrols"> -->
+                <label for="filterResonance">Resonancia:</label>
+                <input id="filterResonance" type="range" min="0.1" max="20" step="0.1" value="1">
+            </div>
+        </div>
+    </div>
+<!-- </div> -->
+
+<footer>
+    <p><a href="index.html" target="_self" >disonancias</a></p>
+    <p>&copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" target="_self" >kdg/dkd</a></p>
+</footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let audioContext;
+            let oscillator1;
+            let oscillator2;
+            let gainNode1;
+            let gainNode2;
+            let filterNode;
+            let isPlaying = false;
+            let clickedPoint = document.getElementById("clickedPoint");
+            let oscillatorBox = document.getElementById("oscillatorBox");
+
+            function initAudio() {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator1 = audioContext.createOscillator();
+                oscillator2 = audioContext.createOscillator();
+                gainNode1 = audioContext.createGain();
+                gainNode2 = audioContext.createGain();
+                filterNode = audioContext.createBiquadFilter();
+
+                oscillator1.connect(gainNode1).connect(filterNode).connect(audioContext.destination);
+                oscillator2.connect(gainNode2).connect(filterNode).connect(audioContext.destination);
+            }
+
+            function updateOscillatorFrequencies(x, y) {
+                const maxFrequency = 1000; // Adjust as needed
+                const xFrequency = (x / 300) * maxFrequency;
+                const yFrequency = (y / 300) * maxFrequency;
+
+                oscillator1.frequency.setValueAtTime(xFrequency, audioContext.currentTime);
+                oscillator2.frequency.setValueAtTime(yFrequency, audioContext.currentTime);
+
+                // Update clicked point position
+                clickedPoint.style.left = `${x}px`;
+                clickedPoint.style.top = `${y}px`;
+
+                // Update background color
+                const redValue = Math.round((x / 300) * 255);
+                const blueValue = Math.round((y / 300) * 255);
+                oscillatorBox.style.backgroundColor = `rgb(${redValue}, 0, ${blueValue})`;
+            }
+
+            function updateOscillatorSettings(oscillator, gainNode, waveform, gain) {
+                oscillator.type = waveform;
+                gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
+            }
+
+            function updateFilterSettings(type, frequency, resonance) {
+                filterNode.type = type;
+                filterNode.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                filterNode.Q.setValueAtTime(resonance, audioContext.currentTime);
+            }
+
+            function startStop() {
+                if (!audioContext) {
+                    initAudio();
+                }
+
+                if (isPlaying) {
+                    oscillator1.stop(audioContext.currentTime);
+                    oscillator2.stop(audioContext.currentTime);
+                    isPlaying = false;
+                    startStopBtn.textContent = "Va";
+                    location.reload();
+                } else {
+                    oscillator1.start(audioContext.currentTime);
+                    oscillator2.start(audioContext.currentTime);
+                    isPlaying = true;
+                    startStopBtn.textContent = "Para";
+                }
+            }
+
+            const startStopBtn = document.getElementById("startStopBtn");
+            const waveform1Select = document.getElementById("waveform1");
+            const gain1Slider = document.getElementById("gain1");
+            const waveform2Select = document.getElementById("waveform2");
+            const gain2Slider = document.getElementById("gain2");
+
+            const filterTypeSelect = document.getElementById('filterType');
+            const filterFrequencyInput = document.getElementById('filterFrequency');
+            const filterResonanceInput = document.getElementById('filterResonance');
+
+            oscillatorBox.addEventListener("click", (event) => {
+                const rect = oscillatorBox.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+
+                updateOscillatorFrequencies(x, y);
+            });
+
+            startStopBtn.addEventListener("click", startStop);
+
+
+            waveform1Select.addEventListener("change", () => {
+                updateOscillatorSettings(oscillator1, gainNode1, waveform1Select.value, gain1Slider.value);
+            });
+
+            gain1Slider.addEventListener("input", () => {
+                updateOscillatorSettings(oscillator1, gainNode1, waveform1Select.value, gain1Slider.value);
+            });
+
+            waveform2Select.addEventListener("change", () => {
+                updateOscillatorSettings(oscillator2, gainNode2, waveform2Select.value, gain2Slider.value);
+            });
+
+            gain2Slider.addEventListener("input", () => {
+                updateOscillatorSettings(oscillator2, gainNode2, waveform2Select.value, gain2Slider.value);
+            });
+
+            filterTypeSelect.addEventListener('change', () => {
+                updateFilterSettings(filterTypeSelect.value, filterFrequencyInput.value, filterResonanceInput.value);
+            });
+
+            filterFrequencyInput.addEventListener('input', () => {
+                updateFilterSettings(filterTypeSelect.value, filterFrequencyInput.value, filterResonanceInput.value);
+            });
+
+            filterResonanceInput.addEventListener('input', () => {
+                updateFilterSettings(filterTypeSelect.value, filterFrequencyInput.value, filterResonanceInput.value);
+            });
+        });
+        
+    </script>
+</body>
+</html>

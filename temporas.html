@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Syne Mono' rel='stylesheet'>
+    <title>Temporas</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: 'Syne Mono';
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #f2f2f2;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        button {
+            background: #888;
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-family: 'Syne Mono';
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .module {
+            background-color: #424242;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h2 {
+            color: #f2f2f2;
+            margin-top: 0;
+            font-size: 1.5rem;
+            text-align: center;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        label {
+            color: #b3b3b3;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 15px;
+            -webkit-appearance: none;
+            background: #555;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #888;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            width: 100%;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .footer-link {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .radio-container {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .radio-container input[type="radio"] + label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            display: inline-block;
+            line-height: 1;
+            margin-left: 10px;
+        }
+
+        .radio-container input[type="radio"] + label::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #888;
+            border: 1px solid #444;
+        }
+
+        .radio-container input[type="radio"]:checked + label::before {
+            background-color: #555;
+        }
+
+        .radio-container input[type="radio"]:checked + label::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Temporas</h1>
+    <button id="start-button">Start</button>
+
+    <div class="module">
+        <h2>Filter</h2>
+        <label for="filter-cutoff">Cutoff</label>
+        <input type="range" id="filter-cutoff" min="20" max="20000" value="1000">
+        
+        <label for="filter-resonance">Resonance</label>
+        <input type="range" id="filter-resonance" min="0" max="10" value="0" step="0.1">
+        
+        <label>Filter Type</label>
+        <div class="radio-container">
+            <input type="radio" name="filter-type" id="filter-type-lowpass" checked>
+            <label for="filter-type-lowpass">Lowpass</label>
+            
+            <input type="radio" name="filter-type" id="filter-type-highpass">
+            <label for="filter-type-highpass">Highpass</label>
+        </div>
+    </div>
+    
+    <div class="module">
+        <h2>Delay</h2>
+        <label for="delay-time">Time</label>
+        <input type="range" id="delay-time" min="0" max="2" value="0.5" step="0.01">
+        
+        <label for="delay-feedback">Feedback</label>
+        <input type="range" id="delay-feedback" min="0" max="1" value="0.9" step="0.01">
+        
+        <label for="delay-mix">Dry/Wet</label>
+        <input type="range" id="delay-mix" min="0" max="1" value="1" step="0.01">
+    </div>
+    
+    <div class="module">
+        <h2>Reverb</h2>
+        <label for="reverb-gain">Gain</label>
+        <input type="range" id="reverb-gain" min="0" max="1" value="0.8" step="0.01">
+        
+        <label for="reverb-mix">Dry/Wet</label>
+        <input type="range" id="reverb-mix" min="0" max="1" value="0.5" step="0.01">
+    </div>
+    
+    <div class="footer">
+        &copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" class="footer-link">kdg/dkd</a>
+        <a href="sampler_monster.html" class="footer-link">➔ sampler/monster</a>
+    </div>
+    <!-- <script src="http://reverbjs.org/reverb.js"></script> -->
+    <script>
+        // Create the audio context
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let microphoneSource;
+        let isMicActive = false;
+    
+        // Create the filter node
+        const filterNode = audioContext.createBiquadFilter();
+        filterNode.type = 'lowpass'; // Default to lowpass filter
+        filterNode.frequency.value = 1000; // Set initial cutoff frequency
+        filterNode.Q.value = 2; // Set initial resonance
+    
+        // Create the delay node
+        const delayNode = audioContext.createDelay(2.0); // Maximum delay time of 2 seconds
+        delayNode.delayTime.value = 0.5; // Initial delay time of 0.5 seconds
+    
+        // Create the reverb node and gain nodes for reverb control
+        const convolver = audioContext.createConvolver();
+        const reverbGainNode = audioContext.createGain();
+        const wetGainNode = audioContext.createGain();
+        const dryGainNode = audioContext.createGain();
+    
+        // Function to load the impulse response
+        async function loadImpulseResponse() {
+            const impulseResponseUrl = "purnodesrailroadtunnel.m4a";
+            try {
+                const response = await fetch(impulseResponseUrl);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                convolver.buffer = audioBuffer;
+                console.log("Impulse response loaded successfully.");
+            } catch (error) {
+                console.error("Error loading impulse response:", error);
+            }
+        }
+    
+        document.getElementById('start-button').addEventListener('click', async () => {
+            if (isMicActive) {
+                // Stop the microphone
+                audioContext.suspend();
+                document.getElementById('start-button').innerText = 'Start';
+                isMicActive = false;
+                return;
+            }
+    
+            // Start the audio context
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+    
+            // Load the impulse response
+            await loadImpulseResponse();
+    
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                microphoneSource = audioContext.createMediaStreamSource(stream);
+    
+                // Create a gain node for feedback
+                const feedbackGain = audioContext.createGain();
+                feedbackGain.gain.value = 0.9; // Initial feedback level
+    
+                // Connect the nodes
+                microphoneSource.connect(filterNode);
+                filterNode.connect(delayNode);
+                delayNode.connect(dryGainNode);
+                delayNode.connect(wetGainNode);
+                dryGainNode.connect(audioContext.destination); // Connect to output for dry signal
+                wetGainNode.connect(convolver);
+                convolver.connect(reverbGainNode);
+                reverbGainNode.connect(audioContext.destination); // Connect to output for wet signal
+    
+                // Connect the feedback loop
+                delayNode.connect(feedbackGain);
+                feedbackGain.connect(delayNode); // Feedback loop
+    
+                // Update delay settings based on user input
+                document.getElementById('delay-time').addEventListener('input', (event) => {
+                    delayNode.delayTime.value = event.target.value;
+                });
+    
+                document.getElementById('delay-feedback').addEventListener('input', (event) => {
+                    feedbackGain.gain.value = event.target.value; // Update feedback level
+                });
+    
+                document.getElementById('delay-mix').addEventListener('input', (event) => {
+                    const wetGain = event.target.value; // Get wet mix value
+                    const dryGain = 1 - wetGain; // Calculate dry mix value
+                    dryGainNode.gain.value = dryGain; // Update dry gain
+                    wetGainNode.gain.value = wetGain; // Update wet gain
+                });
+    
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+            }
+    
+            document.getElementById('start-button').innerText = 'Stop';
+            isMicActive = true;
+        });
+    
+        // Update filter settings based on user input
+        document.getElementById('filter-cutoff').addEventListener('input', (event) => {
+            filterNode.frequency.value = event.target.value;
+        });
+    
+        document.getElementById('filter-resonance').addEventListener('input', (event) => {
+            filterNode.Q.value = event.target.value;
+        });
+    
+        document.querySelectorAll('input[name="filter-type"]').forEach((radio) => {
+            radio.addEventListener('change', (event) => {
+                filterNode.type = event.target.id === 'filter-type-lowpass' ? 'lowpass' : 'highpass';
+            });
+        });
+    
+        // Update reverb settings based on user input
+        document.getElementById('reverb-gain').addEventListener('input', (event) => {
+            reverbGainNode.gain.value = event.target.value; // Adjust reverb gain
+        });
+    
+        document.getElementById('reverb-mix').addEventListener('input', (event) => {
+            const wetGain = event.target.value; // Get wet mix value
+            const dryGain = 1 - wetGain; // Calculate dry mix value
+            dryGainNode.gain.value = dryGain; // Update dry gain
+            wetGainNode.gain.value = wetGain; // Update wet gain
+        });
+    </script>
+</body>
+</html>

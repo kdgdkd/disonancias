@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contaminaciones acústicas">
+  <title>Disonancias</title>
+  <link rel="icon" href="favicon.ico">
+  
+  <link href='https://fonts.googleapis.com/css?family=Honk' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css?family=Keania One' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css?family=Knewave' rel='stylesheet'>
+  
+  <style>
+    body {
+      background-color: #b0c4de;
+      color: rgb(30, 30, 30);
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      font-family: 'Knewave';
+      font-size: larger;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      font-family: 'Honk';
+      background-color: #788ea4; 
+    }
+    main {
+      flex: 1;
+      margin: 0 auto;
+      width: 90%;
+    }
+    footer {
+      text-align: center;
+      margin-top: auto;
+      margin: 0;
+      padding: 10px;
+      background-color: #788ea4; 
+    }
+    h1 {
+      text-shadow: 2px 2px 5px #FF0000;
+      animation: shadowMove 2s infinite;
+      cursor: help;
+    }
+    @keyframes shadowMove {
+      0% { text-shadow: 2px 2px 5px #202020; }
+      50% { text-shadow: -2px -2px 5px #ff3503; }
+      100% { text-shadow: 2px 2px 5px #202020; }
+    }
+    h4 {
+      font-family: 'Knewave'; 
+    }
+    p {
+      text-align: center;
+      font-weight: normal;
+    }
+    ul {
+      max-width: 40%;
+      margin: 0 auto;
+      padding: 0;
+      text-align: left;
+    }
+    li {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      border-bottom: 1px dotted #555;
+      border-radius: 8px;
+      color: rgb(21, 28, 81);
+    }
+    li p {
+      margin-left: auto;
+    }
+    li::before {
+      content: "•";
+      color: #000000;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em;
+      position: relative;
+      animation: bounce 1s infinite;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .descr {
+      color: rgb(41, 43, 152);
+      font-size: smaller;
+    }
+    .collapsible {
+      cursor: pointer;
+      /* font-weight: bold; */
+      /* color: rgb(0, 102, 204); */
+    }
+    .content {
+      display: none; /* Hidden by default */
+      margin-left: 20px; /* Indent */
+    }
+    @media (max-width: 600px) {
+      main {
+        width: 90%;
+      }
+      ul { 
+        width: 90%;
+        max-width: 90%;
+      }
+      li {
+        display: flex;
+        justify-content: center;
+      }
+    }
+  </style>
+  
+  <script>
+    function toggleCollapsible(element) {
+      const content = element.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <h1 onclick="alert('Disonancias es una colección de cachibaches, resultado de proyectos de kdg/dkd alrededor de la generación de sonidos, ruidos, ritmos y arrítmias')">
+      Disonancias
+    </h1>
+    <h4>Cachibaches músicales </h4>
+  </header>
+  <main>
+    <ul>
+      <li><a href="piriclicli.html">Piri-Cli-Cli</a><p class="descr"><a href="piriclicli.html">Secuenciador irregular</a></p></li>
+      <li><a href="xynte.html">XY-nte</a><p class="descr"><a href="xynte.html">Síntesis desordenada</a></p></li>
+      <li><a href="carlossampler.html">Carlos Sampler</a><p class="descr"><a href="carlossampler.html">Super Simple Carlos Sampler</a></p></li>
+      <li><a href="sampler_monster.html">Sampler / Monster</a><p class="descr"><a href="sampler_monster.html">Microsampler</a></p></li>
+      <!-- collapsible line -->
+      <li class="collapsible" onclick="toggleCollapsible(this)">demoras...<p class="descr">Efectos de Audio</p></li>
+      <div class="content">
+        <li><a href="demoras.html">demoras</a><p class="descr"><a href="demoras.html">Delay compuesto</a></p></li>
+        <li><a href="d3moras.html">d3moras</a><p class="descr"><a href="d3moras.html">Procesador de delays</a></p></li>
+        <li><a href="remoras.html">remoras</a><p class="descr"><a href="remoras.html">Delay por frecuencias</a></p></li>      
+        <li><a href="temporas.html">temporas</a><p class="descr"><a href="temporas.html">Reverberaciones</a></p></li>
+      </div>
+    
+      <li><a href="pasitron.html">Pasitron</a><p class="descr"><a href="pulso.html">Pasos por Desfase</a></p></li>
+      <li><a href="cancelacion_de_fase.html">Cancelación de Fase</a><p class="descr"><a href="cancelacion_de_fase.html">Producto intermedio</a></p></li>
+      <li><a href="2osc.html">ZZZZ/2osc</a><p class="descr"><a href="2osc.html">Sinte disonante</a></p></li>
+      <li><a href="pulso.html">ZZZZ/puslo</a><p class="descr"><a href="pulso.html">Generador de pulsos</a></p></li>
+      <li class="collapsible" onclick="toggleCollapsible(this)">visualizaciones...<p class="descr">Distorsiones visuales</p></li>
+      <div class="content">
+        <li><a href="https://www.edpanfleto.com/kdgdkd/_pgs/idos1.html">idos 1</a><p class="descr"><a href="https://www.edpanfleto.com/kdgdkd/_pgs/idos1.html">sodi1</a></p></li>
+        <li><a href="https://www.edpanfleto.com/kdgdkd/_pgs/idos2.html">idos 2</a><p class="descr"><a href="https://www.edpanfleto.com/kdgdkd/_pgs/idos1.html">sodi2</a></p></li>
+        <li><a href="https://www.edpanfleto.com/kdgdkd/_pgs/idos3.html?bpm=123">idos 3</a><p class="descr"><a href="https://www.edpanfleto.com/kdgdkd/_pgs/idos1.html">sodi3</a></p></li>
+      </div>
+      <li><a href="https://www.edpanfleto.com/motorik25/seque.html">M25</a><p class="descr"><a href="https://www.edpanfleto.com/motorik25/seque.html">Contador de compases</a></p></li>
+      
+      
+    </ul>
+  </main>
+  <footer>
+    <p>&copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/">kdg/dkd</a></p>
+  </footer>
+</body>
+</html>

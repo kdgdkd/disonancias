@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Secuenciador Irregular">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIRICLICLI</title>
+    <link rel="icon" href="favicon.ico">
+    <link href='https://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Bruno Ace SC' rel='stylesheet'>
+    
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            max-width: 95%;
+            margin: 0;
+            background-color: #333; /* Dark background color */
+            color: #eee; /* Light text color */
+            font-family: 'Aldrich';
+            font-size: 14px;
+        }
+
+        h1 {
+            font-family: 'Bruno Ace SC';
+            font-size: 36px;
+            text-shadow: 2px 2px 2px #000, -2px -2px 2px #7e7e7e;
+            animation: shadowAnimation 6s infinite alternate; /* Adjust the duration as needed */
+        }
+
+        h2 {
+            font-family: 'Bruno Ace SC';
+            text-shadow: 2px 2px 2px #000, -2px -2px 2px #bababa;
+            animation: shadowAnimation 3s infinite alternate; /* Adjust the duration as needed */
+        }
+
+
+        @keyframes shadowAnimation {
+            0% {
+                text-shadow: 2px 2px 2px #000, -2px -2px 2px #bababa;
+            }
+            25% {
+                text-shadow: 4px 4px 4px #000, -4px 0px 4px #bababa;
+            }
+            50% {
+                text-shadow: 5px 0px 5px #000, -5px 2px 5px #bababa;
+            }
+            75% {
+                text-shadow: 0px 4px 4px #000, -4px 0px 4px #bababa;
+            }
+            100% {
+                text-shadow: 2px 2px 2px #000, -2px -2px 0px #bababa;
+            }
+        }
+
+        
+        #main-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 600px;
+            margin: 0 auto;
+        }
+        
+        #controls-container {
+            border: 1px solid #555; /* Dark border color */
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            margin-top: 10px;
+            /* max-width: 300px; */
+            width: 40%;
+            align-content: center ;
+            text-align: center;
+            /* margin-left: 10px; */
+            background-color: #2a2a2a; /* Dark container background color */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Container shadow */
+
+        }
+        
+        #buttons-container {
+            border: 1px solid #555; /* Dark border color */
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            width: 550px;
+            /* justify-content: center; */
+            /* align-content: center ; */
+            text-align: center;
+            /* margin-top: 10px; */
+            /* margin-left: 10px; */
+            margin-bottom: 20px;
+            background-color: #2a2a2a; /* Dark container background color */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Container shadow */
+
+        }
+
+        .controls {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 7px;
+            width: 95%;
+            /* border: 1px solid #555; */
+            padding: 5px;
+        }
+
+        .boxes {
+
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            width: 70%;
+            /* border: 1px solid #555; */
+            padding: 5px;
+        }
+
+        label {
+            /* margin-bottom: 5px; */
+            font-weight: bold;
+            /* padding: 5px; */
+        }
+
+        select, input[type="range"] {
+            width: 80%;
+            margin-top: 5px;
+            background-color: #555; /* Dark input background color */
+            border: 1px solid #666; /* Dark input border color */
+            color: #eee; /* Light text color */
+            text-align: center;
+        }
+
+        button {
+            font-family: 'Bruno Ace SC';
+            /* margin-right: 10px;000 */
+            font-size: 16px;
+            padding: 10px 20px;
+            width: 120px;
+            cursor: pointer;
+            background-color: #444; /* Dark button background color */
+            border: 1px solid #555; /* Dark button border color */
+            color: #eee; /* Light text color */
+            border-radius: 8px; /* Rounded edges */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow */
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s; /* Smooth transition */
+            
+        }
+
+        button:hover {
+            background-color: #292929; /* Dark button background color on hover */
+            border: 1px solid #777; /* Dark button border color on hover */
+            color: #fff; /* Light text color on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Larger shadow on hover */
+        }
+
+        .buttonstop {
+            font-family: 'Bruno Ace SC';
+            /* margin-right: 10px;000 */
+            font-size: 16px;
+            padding: 10px 20px;
+            width: 120px;
+            cursor: pointer;
+            background-color: #292929; /* Dark button background color */
+            border: 1px solid #555; /* Dark button border color */
+            color: #eee; /* Light text color */
+            border-radius: 8px; /* Rounded edges */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow */
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s; /* Smooth transition */
+            
+        }
+
+        .buttonstop:hover {
+            background-color: #585858; /* Dark button background color on hover */
+            border: 1px solid #777; /* Dark button border color on hover */
+            color: #fff; /* Light text color on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Larger shadow on hover */
+        }
+
+        .slider-label {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .step-label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .seqcontainer {
+            display: flex; 
+            /* flex-wrap: wrap; */
+            justify-content: space-around; 
+            /* max-width: 100%; */
+            /* width: 80%;  */
+            margin: 0 auto;
+            /* border: 2px solid #5d5d5d; */
+            /* border-radius: 8px; */
+            /* padding: 10px; */
+            /* margin-top: 2px; */
+            /* margin-bottom: 10px; */
+            flex-wrap: wrap;
+            width: 800px; /* Adjust the width as needed */
+            margin-bottom: 20px;
+        }
+
+        .step-container {
+            /* width: 100%; */
+            width: calc(22% - 10px); 
+            border: 1px solid #555; /* Dark border color */
+            border-radius: 8px; /* Rounded edges */
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-right: 5px;
+            margin-left: 5px;
+            align-items: center;
+            text-align: center;
+            background-color: #202020; /* Dark container background color */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Container shadow */
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+        }
+
+        .step-container:hover {
+            background-color: #444; /* Dark container background color on hover */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); /* Larger shadow on hover */
+        }
+
+        .step-container.current-step {
+            background-color: #656565; /* Dark container background color on current step */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); /* Larger shadow on current step */
+        }
+        
+        a {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Use the default text color */
+        }
+
+        footer {
+            background-color: #333; /* Dark background color */
+            color: #eee; /* Light text color */
+            text-align: center;
+            padding: 20px;
+            /* position: fixed;  */
+            bottom: 0;
+            width: 100%;
+        }
+
+
+
+        @media screen and (max-width: 600px) {
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 90%;
+            }
+
+            #main-container {
+                width: 70%;
+                padding: 0 20px; /* Add some padding to prevent content from touching the screen edges */
+            }
+
+            #buttons-container {
+                width: 70%;
+                flex-wrap: wrap;
+            }
+            
+            button {
+                font-size: auto;
+                margin-bottom: 10px;
+            }
+
+            #controls-container {
+                width: 100%;
+            }
+
+            .seqcontainer {
+                width: 100%;
+            }
+
+            .step-container {
+                width: 70%; /* Adjust the width as needed */
+            }
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <h1>PIRI-CLI-CLI</h1>
+    <h2>Secuenciador Irregular</h2>
+
+    <div id="main-container">
+        <div id="controls-container">
+
+            <div class="boxes">
+                <label for="waveType">Qué Onda:</label>
+                <select id="waveType">
+                    <!-- Options for wave types -->
+                    <option value="sine">Sinusoidal</option>
+                    <option value="square">Cuadrada</option>
+                    <option value="triangle">Triangular</option>
+                    <option value="sawtooth">Sierra</option>
+                </select>
+            </div>
+            <div class="boxes">
+                <label for="numSteps">Pasos:</label>
+                <select id="numSteps">
+                    <!-- Options for the number of steps -->
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                </select>
+            </div>
+
+
+            <div class="controls">
+                <!-- <label for="baseStepDuration">T Paso:</label> -->
+                <div class="slider-label" id="baseStepDurationLabel">T Paso: 250 ms</div>
+                <input id="baseStepDuration" type="range" min="0" max="2000" step="25" value="250">
+                <!-- <div class="slider-label" id="baseStepDurationLabel">250 ms</div> -->
+            </div>
+
+        </div>
+
+        
+        <div id="controls-container">
+            <div class="boxes">
+                <label for="filterType">Tipo de Filtro:</label>
+                <select id="filterType">
+                    <option value="lowpass">Lowpass</option>
+                    <option value="highpass">Highpass</option>
+                    <option value="bandpass">Bandpass</option>
+                    <option value="lowshelf">Lowshelf</option>
+                    <option value="highshelf">Highshelf</option>
+                </select>
+            </div>
+
+            <div class="controls">
+                <!-- <label for="filterFrequency">Frecuencia:</label> -->
+                <div class="slider-label" id="filterFrequencyLabel">Frecuencia: 1000 Hz</div>
+                <input id="filterFrequency" type="range" min="20" max="2000" step="10" value="1000">
+            </div>
+
+            <div class="controls">
+                <!-- <label for="filterQ">Resonancia:</label> -->
+                <div class="slider-label" id="filterQLabel">Resonancia: 1</div>
+                <input id="filterQ" type="range" min="0.1" max="20" step="0.1" value="1">
+            </div>
+            
+        </div>
+
+    </div>
+    <div id="buttons-container">
+        <button id="startStopBtn">Cli-Cli</button>
+        <button id="shuffleBtn">Tripi</button>
+        <button class= "buttonstop" id="stopBtn">Para</button>
+        <button class= "buttonstop" id="reloadBtn">Reini</button>
+    </div>
+
+    <!-- <br>
+    <label class="step-label">. . . . </label>
+    <label class="step-label">· · · · </label> -->
+    <div id="sequencer" class="seqcontainer">
+        <!-- Sequencer controls will be dynamically added here -->
+    </div>
+
+    <footer>
+        <p><a href="index.html" target="_self" >disonancias</a></p>
+        <p>&copy; 2024 <a href="../kdgdkd/index.html" target="_self" >kdg/dkd</a></p>
+    </footer>
+      
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let audioContext;
+            let oscillator;
+            let gainNode;
+            let filterNode;
+            let isPlaying = false;
+            let stepIndex = 0;
+            let sequencerInterval;
+            let numSteps = 4; // Default number of steps
+            let waveType = 'sine'; // Default wave type
+            let baseStepDuration = 250; // Default base step duration in ms
+            const stepDurations = new Array(numSteps + 1).fill(250); // Array to store durations for each step
+            const stepContainers = [];
+            const nota = 'A4';
+
+            function initAudio() {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioContext.createGain();
+                filterNode = audioContext.createBiquadFilter();
+                filterNode.type = 'lowpass'; // Set filter type to lowpass by default
+                filterNode.frequency.value = 1000; // Set initial filter frequency
+                filterNode.Q.value = 1; // Set initial filter Q value
+                gainNode.connect(filterNode);
+                filterNode.connect(audioContext.destination);
+            }
+
+            function createStepControls(stepIndex) {
+                const stepContainer = document.createElement('div');
+                stepContainer.classList.add('step-container');
+
+                // Add step label
+                const stepLabel = document.createElement('div');
+                stepLabel.classList.add('step-label');
+                stepLabel.textContent = `P${stepIndex + 1}`;
+                stepContainer.appendChild(stepLabel);
+
+                const lengthSlider = document.createElement('input');
+                lengthSlider.type = 'range';
+                lengthSlider.min = 1;
+                lengthSlider.max = 30;
+                lengthSlider.step = 1;
+                lengthSlider.value = 10;
+
+                const pitchSlider = document.createElement('input');
+                pitchSlider.type = 'range';
+                pitchSlider.min = 100;
+                pitchSlider.max = 1000;
+                pitchSlider.step = 10;
+                pitchSlider.value = 440;
+
+                const gainSlider = document.createElement('input');
+                gainSlider.type = 'range';
+                gainSlider.min = 0;
+                gainSlider.max = 1;
+                gainSlider.step = 0.01;
+                gainSlider.value = 0.5;
+
+                const lengthLabel = document.createElement('div');
+                lengthLabel.classList.add('slider-label');
+                lengthLabel.textContent = `Factor-t: ${lengthSlider.value}/10`;
+
+                const pitchLabel = document.createElement('div');
+                pitchLabel.classList.add('slider-label');
+                pitchLabel.textContent = `Tono: ${pitchSlider.value}Hz`;
+
+                const noteLabel = document.createElement('div');
+                noteLabel.classList.add('slider-label');
+                noteLabel.textContent = `${nota}`;
+
+                const gainLabel = document.createElement('div');
+                gainLabel.classList.add('slider-label');
+                gainLabel.textContent = `Ganancia: ${gainSlider.value * 10}/10`;
+
+                stepContainer.appendChild(noteLabel);
+                stepContainer.appendChild(pitchLabel);
+                stepContainer.appendChild(pitchSlider);
+                stepContainer.appendChild(lengthLabel);
+                stepContainer.appendChild(lengthSlider);
+                stepContainer.appendChild(gainLabel);
+                stepContainer.appendChild(gainSlider);
+
+                document.getElementById('sequencer').appendChild(stepContainer);
+
+                lengthSlider.addEventListener('input', (event) => {
+                    lengthLabel.textContent = `Factor-t: ${event.target.value}/10`;
+                    stepDurations[stepIndex + 1] = event.target.value * baseStepDuration * 0.1; // Update duration for the current step
+                });
+
+                pitchSlider.addEventListener('input', (event) => {
+                    noteLabel.textContent = `${frequencyToNote(event.target.value)}`;
+                    pitchLabel.textContent = `Tono: ${event.target.value}Hz`;
+                });
+
+                gainSlider.addEventListener('input', (event) => {
+                    const rawValue = parseFloat(event.target.value);
+    const roundedGValue = Math.round(rawValue * 100) / 10;
+
+    // Use toFixed(1) to ensure one decimal place and convert to string
+    const formattedValue = roundedGValue.toFixed(1);
+
+    gainLabel.textContent = `Ganancia: ${formattedValue}/10`;
+});
+
+                stepContainers.push({ lengthSlider, pitchSlider, gainSlider });
+            }
+
+            function updateNumSteps() {
+                const selectNumSteps = document.getElementById('numSteps');
+                const newNumSteps = parseInt(selectNumSteps.value, 10);
+
+                // Reset stepIndex and sequencerInterval when the number of steps changes
+                stepIndex = 0;
+                clearInterval(sequencerInterval);
+
+                numSteps = newNumSteps;
+                stepDurations.length = numSteps;
+                stepContainers.length = 0; // Clear existing stepContainers
+
+                // Remove existing step controls
+                const sequencer = document.getElementById('sequencer');
+                while (sequencer.firstChild) {
+                    sequencer.removeChild(sequencer.firstChild);
+                }
+                // Create new step controls
+                for (let i = 0; i < numSteps; i++) {
+                    createStepControls(i);
+                    stepDurations[i + 1] = baseStepDuration;
+                }
+
+                if (isPlaying) {
+                    startStop();
+                }
+            }
+
+            function updateWaveType() {
+                const selectWaveType = document.getElementById('waveType');
+                waveType = selectWaveType.value;
+            }
+
+            function updateFilterFrequency() {
+                const filterFrequencySlider = document.getElementById('filterFrequency');
+                const filterFrequencyLabel = document.getElementById('filterFrequencyLabel');
+                filterNode.frequency.value = parseFloat(filterFrequencySlider.value);
+                filterFrequencyLabel.textContent = `Frecuencia: ${filterNode.frequency.value} Hz`;
+            }
+
+            function frequencyToNote(frequency) {
+                const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+                const semitoneRatio = Math.pow(2, 1/12); // the twelfth root of 2
+                const A4 = 440; // frequency of A4
+                const A4Index = 9; // the index of 'A' in the noteNames array
+
+                // calculate the note number (includes decimal for sharps/flats)
+                const noteNumber = Math.round(12 * Math.log2(frequency / A4));
+
+                // calculate the index of the note name in the noteNames array
+                const noteNameIndex = (A4Index + noteNumber + 12) % 12;
+
+                // calculate the octave
+                const octave = Math.floor((A4Index + noteNumber + 12) / 12) + 4 - 1;
+
+                // construct the note name
+                const noteName = noteNames[noteNameIndex] + octave;
+
+                return noteName;
+            }
+
+            function updateFilterQ() {
+                const filterQSlider = document.getElementById('filterQ');
+                const filterQLabel = document.getElementById('filterQLabel');
+                
+                // Get the value from the slider
+                const filterQValue = parseFloat(filterQSlider.value);
+
+                // Round the value to 2 decimals
+                const roundedQValue = filterQValue.toFixed(2);
+
+                filterNode.Q.value = roundedQValue;
+                filterQLabel.textContent = `Resonancia: ${roundedQValue}`;
+            }
+
+            function updateBaseStepDuration() {
+                const baseStepDurationSlider = document.getElementById('baseStepDuration');
+                const baseStepDurationLabel = document.getElementById('baseStepDurationLabel');
+                const newBaseStepDuration = parseFloat(baseStepDurationSlider.value);
+                baseStepDurationLabel.textContent = `T Paso: ${newBaseStepDuration} ms`;
+
+                // Recalculate step durations based on the new base step duration
+                baseStepDuration = newBaseStepDuration;
+                
+                for (let i = 0; i < numSteps; i++) {
+                    // Update duration for each step based on the formula
+                    stepDurations[i] = baseStepDuration * stepContainers[i].lengthSlider.value * 0.1;
+                }
+            }
+
+            function startStopShuffle() {
+                if (!audioContext) {
+                    initAudio();
+                }
+                if (isPlaying) {
+                    oscillator.stop(audioContext.currentTime);
+                    oscillator.disconnect();
+                    clearInterval(sequencerInterval);
+                    isPlaying = false;
+                    shuffleBtn.textContent = "Tripi"; // Change button text to "Start" when stopped
+                    // Remove the "current-step" class from all step containers when stopping
+                    stepContainers.forEach(container => container.classList.remove('current-step'));
+                } else {
+                    oscillator = audioContext.createOscillator();
+                    oscillator.connect(gainNode);
+                    oscillator.type = waveType;
+                    oscillator.start(audioContext.currentTime);
+
+                    sequencerInterval = setInterval(playRandomStep, stepDurations[stepIndex]);
+                    isPlaying = true;
+                    shuffleBtn.textContent = "Piri"; // Change button text to "Stop" when playing
+                }
+            }
+
+            function playRandomStep() {
+                // Stop the oscillator and clear the interval if it reaches the end of the steps
+                if (stepIndex >= numSteps) {
+                    stepIndex = 0;
+                    // oscillator.stop(audioContext.currentTime);
+                    // oscillator.disconnect();
+                    // clearInterval(sequencerInterval);
+                    // isPlaying = false;
+                    // shuffleBtn.textContent = "Tripi"; // Change button text to "Start" when stopped
+                    // // Remove the "current-step" class from all step containers when stopping
+                    // stepContainers.forEach(container => container.lengthSlider.parentNode.classList.remove('current-step'));
+                    // return;
+                }
+
+                // Get a random index for the next step
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * numSteps);
+                } while (randomIndex === stepIndex); // Make sure the random index is different from the current index
+
+                // Set oscillator frequency based on pitchSlider value
+                oscillator.frequency.setValueAtTime(stepContainers[randomIndex].pitchSlider.value, audioContext.currentTime);
+
+                // Set the gain (volume) based on gainSlider value
+                gainNode.gain.setValueAtTime(stepContainers[randomIndex].gainSlider.value, audioContext.currentTime);
+
+                // Move to the next step
+                stepIndex++;
+
+                // Clear the interval and set it for the next step
+                clearInterval(sequencerInterval);
+                sequencerInterval = setInterval(playRandomStep, stepDurations[randomIndex]);
+            }
+
+            function startStop() {
+                if (!audioContext) {
+                    initAudio();
+                }
+
+                if (isPlaying) {
+                    oscillator.stop(audioContext.currentTime);
+                    oscillator.disconnect();
+                    clearInterval(sequencerInterval);
+                    isPlaying = false;
+                    startStopBtn.textContent = "Cli-Cli"; 
+                    // Remove the "current-step" class from all step containers when stopping
+                    stepContainers.forEach(container => container.classList.remove('current-step'));
+                } else {
+                    oscillator = audioContext.createOscillator();
+                    oscillator.connect(gainNode);
+                    oscillator.type = waveType;
+                    oscillator.start(audioContext.currentTime);
+                    sequencerInterval = setInterval(playStep, stepDurations[stepIndex]);
+                    isPlaying = true;
+                    startStopBtn.textContent = "Piri"; // Change button text to "Stop" when playing
+                    // Reset step index when starting the sequencer
+                    stepIndex = 0;
+                    stepContainers[0].classList.add('current-step');
+                }
+            }
+
+            function playStep() {
+                const currentStep = stepContainers[stepIndex];
+                const currentStepContainer = document.querySelector('.step-container.current-step');
+
+                if (currentStepContainer) {
+                    currentStepContainer.classList.remove('current-step');
+                }
+
+                // Set oscillator frequency based on pitchSlider value
+                oscillator.frequency.setValueAtTime(currentStep.pitchSlider.value, audioContext.currentTime);
+
+                // Set the gain (volume) based on gainSlider value
+                gainNode.gain.setValueAtTime(currentStep.gainSlider.value, audioContext.currentTime);
+
+                // Add the "current-step" class to the lengthSlider of the currently playing step
+                stepContainers[stepIndex].lengthSlider.parentNode.classList.add('current-step');
+
+                if (stepIndex === 0 && !isPlaying) {
+                    oscillator.disconnect();
+                    isPlaying = false;
+                } else {
+                    // Update sequencer interval for the next step
+                    clearInterval(sequencerInterval);
+                    sequencerInterval = setInterval(playStep, stepDurations[stepIndex + 1]);
+                }
+                // Move to the next step
+                stepIndex = (stepIndex + 1) % numSteps;
+            }
+
+            function updateFilterType() {
+                const filterTypeSelect = document.getElementById('filterType');
+                filterNode.type = filterTypeSelect.value;
+            }
+
+            function seqStop() {
+                if (isPlaying) {
+                    oscillator.stop(audioContext.currentTime);
+                    oscillator.disconnect();
+                    clearInterval(sequencerInterval);
+                    isPlaying = false;
+                    startStopBtn.textContent = "Cli-Cli"; 
+                    shuffleBtn.textContent = "Tripi";
+                }
+            }
+
+            // Add event listeners for filter controls
+            const filterTypeSelect = document.getElementById('filterType');
+            filterTypeSelect.addEventListener('change', updateFilterType);
+
+            // Create initial step controls
+            for (let i = 0; i < numSteps; i++) {
+                createStepControls(i);
+            }
+
+            // Add event listeners
+            const startStopBtn = document.getElementById('startStopBtn');
+            startStopBtn.addEventListener('click', startStop);
+
+            // Add event listeners
+            const shuffleBtn = document.getElementById('shuffleBtn');
+            shuffleBtn.addEventListener('click', startStopShuffle);
+
+            // Add event listeners
+            const stopBtn = document.getElementById('stopBtn');
+            stopBtn.addEventListener('click', seqStop);
+
+            // Add event listener for the reload button
+            const reloadBtn = document.getElementById('reloadBtn');
+            reloadBtn.addEventListener('click', () => {
+                location.reload(); // Reload the page
+            });
+
+            const selectNumSteps = document.getElementById('numSteps');
+            selectNumSteps.addEventListener('change', updateNumSteps);
+
+            const selectWaveType = document.getElementById('waveType');
+            selectWaveType.addEventListener('change', updateWaveType);
+
+            const filterFrequencySlider = document.getElementById('filterFrequency');
+            filterFrequencySlider.addEventListener('input', updateFilterFrequency);
+
+            const filterQSlider = document.getElementById('filterQ');
+            filterQSlider.addEventListener('input', updateFilterQ);
+
+            const baseStepDurationSlider = document.getElementById('baseStepDuration');
+            baseStepDurationSlider.addEventListener('input', updateBaseStepDuration);
+
+        });
+    </script>
+</body>
+</html>

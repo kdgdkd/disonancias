@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Syne Mono' rel='stylesheet'>
+    <title>d3moras</title>
+    <style>
+body {
+    background-color: #333;
+    color: #fff;
+    font-family: 'Syne Mono';
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    margin-bottom: 20px;
+    font-family: 'Syne Mono';
+    font-weight: bold;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+        /* justify-content: center; */
+    width: 100%;
+    margin: 0 auto;
+        /* justify-content: space-between; */
+}
+
+.block {
+    background-color: #ccc;
+    color: #000;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 10px;
+    /* width: calc(50% - 20px); */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* box-sizing: border-box; */
+}
+
+.footer {
+    margin-top: auto;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.footer-link {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
+
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 260px;
+}
+
+label {
+    margin-top: 10px;
+}
+
+@media (min-width: 800px) {
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 20px;
+        justify-content: center;
+        width: auto;
+    }
+
+    .header {
+        grid-column: 1 / span 2;
+        text-align: center;
+    }
+
+    .button-container {
+        grid-column: 1 / span 2;
+        text-align: center;
+    }
+
+    .filterBlock {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .delay3Block {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .delay1Block {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .delay2Block {
+        grid-column: 2;
+        grid-row: 3;
+    }
+}
+
+/* Slider styles */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 10px 0;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #555;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -4px;
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #666;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #555;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+input[type="range"]::-moz-range-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+    background: #444;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+input[type="range"]::-ms-fill-upper {
+    background: #444;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+input[type="range"]::-ms-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+    height: 8px;
+}
+
+input[type="range"]:focus::-ms-fill-lower {
+    background: #666;
+}
+
+input[type="range"]:focus::-ms-fill-upper {
+    background: #666;
+}
+
+input[type="radio"] {
+    display: none;
+}
+.radio-container {
+    display: flex;
+    align-items: center;
+    /* margin-top: 10px; */
+}
+
+.radio-container input[type="radio"] + label {
+    position: relative;
+    padding-left: 30px; /* Adjust as needed for spacing */
+    cursor: pointer;
+    display: inline-block;
+    line-height: 1;
+}
+
+.radio-container input[type="radio"] + label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px; /* Size of the radio button */
+    height: 10px;
+    border-radius: 50%;
+    background-color: #888; /* Radio button color */
+    border: 1px solid #444;
+}
+
+.radio-container input[type="radio"]:checked + label::before {
+    background-color: #555; /* Checked color */
+}
+
+.radio-container input[type="radio"]:checked + label::after {
+    content: "";
+    position: absolute;
+    left: 6px; /* Adjust as needed */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4; /* Size of the inner dot */
+    height: 4px;
+    border-radius: 50%;
+    background-color: #fff; /* Inner dot color */
+}
+
+
+    </style>
+</head>
+<body>
+    <h1 class="header">d3moras</h1>
+    <div class="button-container">
+        <button id="toggleButton">Start</button>
+    </div>
+    <div class="container">
+        <div class="block filterBlock" id="filterBlock">
+            <h3>Micro In</h3>
+            <div class="slider-container">
+                <label for="filterFrequency">Frequency:</label>
+                <input type="range" id="filterFrequency" min="100" max="10000" step="100" value="1000">  
+
+                <label for="filterQ">Resonance:</label>
+                <input type="range" id="filterQ" min="1" max="20" step="0.1" value="1.0">
+                
+                <label for="filterCurve">Distorsion:</label>
+                <input type="range" id="filterCurve" min="-1" max="1" step="0.01" value="0">
+                        
+                <label for="oversampleLabel">Oversample:</label>
+                <div class="radio-container">
+                    <input type="radio" id="oversampleNone" name="oversample" value="none">
+                    <label for="oversampleNone">None</label>
+                </div>
+                <div class="radio-container">
+                    <input type="radio" id="oversample2x" name="oversample" value="2x">
+                    <label for="oversample2x">2x</label>
+                </div>
+                <div class="radio-container">
+                    <input type="radio" id="oversample4x" name="oversample" value="4x" checked>
+                    <label for="oversample4x">4x</label>
+                </div>
+                
+
+            </div>
+        </div>
+        
+        <div class="block delay3Block" id="delay3Block">
+            <h3>FX Out</h3>
+            <div class="slider-container">
+                <label for="delay3Volume1">D1 Vol In:</label>
+                <input type="range" id="delay3Volume1" min="0" max="100" step="1" value="50">
+                <label for="delay3Volume2">D2 Vol In:</label>
+                <input type="range" id="delay3Volume2" min="0" max="100" step="1" value="50">
+                <label for="delay3Time">Delay Time:</label>
+                <input type="range" id="delay3Time" min="0" max="2000" step="10" value="500">
+                <label for="delay3Feedback">Feedback:</label>
+                <input type="range" id="delay3Feedback" min="0" max="100" step="1" value="85">
+                <label for="compressorRatio">Compressor:</label>
+                <input type="range" id="compressorRatio" min="1" max="20" step="1" value="20">
+            </div>
+        </div>
+        <div class="block delay1Block" id="delay1Block">
+            <h3>Delay 1</h3>
+            <div class="slider-container">
+                <label for="delay1Time">Delay Time:</label>
+                <input type="range" id="delay1Time" min="0" max="4000" step="10" value="800">
+                <label for="delay1Feedback">Feedback:</label>
+                <input type="range" id="delay1Feedback" min="0" max="100" step="1" value="75">
+                <label for="delay1Panning">Panning:</label>
+                <input type="range" id="delay1Panning" min="-1" max="1" step="0.01" value="0">
+                <label for="delay1WetDry">Dry/Wet Mix:</label>
+                <input type="range" id="delay1WetDry" min="0" max="100" step="1" value="100">
+            </div>
+        </div>
+        
+        <div class="block delay2Block" id="delay2Block">
+            <h3>Delay 2</h3>
+            <div class="slider-container">
+                <label for="delay2Time">Delay Time:</label>
+                <input type="range" id="delay2Time" min="0" max="4000" step="10" value="700">
+                <label for="delay2Feedback">Feedback:</label>
+                <input type="range" id="delay2Feedback" min="0" max="100" step="1" value="80">
+                <label for="delay2Panning">Panning:</label>
+                <input type="range" id="delay2Panning" min="-1" max="1" step="0.01" value="0">
+                <label for="delay2WetDry">Dry/Wet Mix:</label>
+                <input type="range" id="delay2WetDry" min="0" max="100" step="1" value="100">
+            </div>
+        </div>
+        
+        
+    </div>
+    <div class="footer">
+        &copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" class="footer-link">kdg/dkd</a>
+        <a href="remoras.html" class="footer-link">➔ remoras</a>
+    </div>
+    
+
+    <script>
+const toggleButton = document.getElementById('toggleButton');
+const filterFrequency = document.getElementById('filterFrequency');
+const delay1Time = document.getElementById('delay1Time');
+const delay1Feedback = document.getElementById('delay1Feedback');
+const delay1Panning = document.getElementById('delay1Panning');
+const delay2Time = document.getElementById('delay2Time');
+const delay2Feedback = document.getElementById('delay2Feedback');
+const delay2Panning = document.getElementById('delay2Panning');
+const delay3Time = document.getElementById('delay3Time');
+const delay3Feedback = document.getElementById('delay3Feedback');
+const delay3Volume1 = document.getElementById('delay3Volume1');
+const delay3Volume2 = document.getElementById('delay3Volume2');
+const delay1WetDry = document.getElementById('delay1WetDry');
+const delay2WetDry = document.getElementById('delay2WetDry');
+const filterCurve = document.getElementById('filterCurve');
+const oversampleRadios = document.getElementsByName('oversample');
+const compressorRatio = document.getElementById('compressorRatio');
+
+let audioContext;
+let isCapturing = false;
+let mediaStreamSource;
+let filterNode;
+let delayNode1, feedbackGain1, panner1;
+let delayNode2, feedbackGain2, panner2;
+let delayNode3, feedbackGain3;
+let gainNode1, gainNode2, finalMixGain;
+let wetGain1, dryGain1;
+let wetGain2, dryGain2;
+let waveShaperNode;
+let compressorNode;
+
+function updateSliderLabels() {
+    document.querySelector('label[for="filterFrequency"]').innerHTML = `Frequency: ${filterFrequency.value} Hz`;
+    document.querySelector('label[for="filterQ"]').innerHTML = `Q: ${filterQ.value}`;
+    document.querySelector('label[for="filterCurve"]').innerHTML = `Curve: ${filterCurve.value}`;
+
+    const oversample = document.querySelector('input[name="oversample"]:checked').value;
+    document.querySelector('label[for="oversampleLabel"]').innerHTML = `Oversample: ${oversample}`;
+
+    document.querySelector('label[for="delay1Time"]').innerHTML = `Delay Time: ${delay1Time.value} ms`;
+    document.querySelector('label[for="delay1Feedback"]').innerHTML = `Feedback: ${delay1Feedback.value}%`;
+    document.querySelector('label[for="delay1Panning"]').innerHTML = `Panning: ${delay1Panning.value}`;
+    document.querySelector('label[for="delay1WetDry"]').innerHTML = `Dry/Wet Mix: ${delay1WetDry.value}%`;
+
+    document.querySelector('label[for="delay2Time"]').innerHTML = `Delay Time: ${delay2Time.value} ms`;
+    document.querySelector('label[for="delay2Feedback"]').innerHTML = `Feedback: ${delay2Feedback.value}%`;
+    document.querySelector('label[for="delay2Panning"]').innerHTML = `Panning: ${delay2Panning.value}`;
+    document.querySelector('label[for="delay2WetDry"]').innerHTML = `Dry/Wet Mix: ${delay2WetDry.value}%`;
+
+    document.querySelector('label[for="delay3Time"]').innerHTML = `Delay Time: ${delay3Time.value} ms`;
+    document.querySelector('label[for="delay3Feedback"]').innerHTML = `Feedback: ${delay3Feedback.value}%`;
+    document.querySelector('label[for="delay3Volume1"]').innerHTML = `D1 Vol In: ${delay3Volume1.value}%`;
+    document.querySelector('label[for="delay3Volume2"]').innerHTML = `D2 Vol In: ${delay3Volume2.value}%`;
+}
+
+
+toggleButton.addEventListener('click', () => {
+    isCapturing = !isCapturing;
+    toggleButton.textContent = isCapturing ? 'Stop' : 'Start';
+    if (isCapturing) {
+        startCapture();
+    } else {
+        stopCapture();
+    }
+});
+
+async function startCapture() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaStreamSource = audioContext.createMediaStreamSource(stream);
+
+    // Create filter node
+    filterNode = audioContext.createBiquadFilter();
+    filterNode.type = 'lowpass';
+
+    // Create wave shaper node
+    waveShaperNode = audioContext.createWaveShaper();
+    filterNode.connect(waveShaperNode);
+
+    compressorNode = audioContext.createDynamicsCompressor();
+    
+    // Set default distortion curve
+    waveShaperNode.curve = makeDistortionCurve(0);
+    waveShaperNode.oversample = '4x'; // Default oversample setting
+
+
+
+    // Create delay nodes and feedback gain nodes
+    delayNode1 = audioContext.createDelay(2.0);
+    feedbackGain1 = audioContext.createGain();
+    panner1 = audioContext.createStereoPanner();
+    wetGain1 = audioContext.createGain();
+    dryGain1 = audioContext.createGain();
+
+    delayNode2 = audioContext.createDelay(2.0);
+    feedbackGain2 = audioContext.createGain();
+    panner2 = audioContext.createStereoPanner();
+    wetGain2 = audioContext.createGain();
+    dryGain2 = audioContext.createGain();
+
+    delayNode3 = audioContext.createDelay(2.0);
+    feedbackGain3 = audioContext.createGain();
+    gainNode1 = audioContext.createGain();
+    gainNode2 = audioContext.createGain();
+    finalMixGain = audioContext.createGain();
+
+    compressorNode = audioContext.createDynamicsCompressor();
+    // Connect the nodes
+    mediaStreamSource.connect(filterNode);
+    filterNode.connect(waveShaperNode);
+    waveShaperNode.connect(delayNode1);
+
+    delayNode1.connect(feedbackGain1);
+    feedbackGain1.connect(delayNode1);
+    delayNode1.connect(delayNode2);
+
+    delayNode2.connect(feedbackGain2);
+    feedbackGain2.connect(delayNode2);
+    delayNode2.connect(gainNode1);
+
+    delayNode1.connect(panner1);
+    delayNode2.connect(panner2);
+
+    panner1.connect(gainNode1);
+    panner2.connect(gainNode2);
+
+    wetGain1.connect(gainNode1);
+    dryGain1.connect(gainNode1);
+    wetGain2.connect(gainNode2);
+    dryGain2.connect(gainNode2);
+
+    gainNode1.connect(delayNode3);
+    gainNode2.connect(delayNode3);
+delayNode3.connect(compressorNode);
+compressorNode.connect(feedbackGain3);
+    feedbackGain3.connect(delayNode3);
+    delayNode3.connect(finalMixGain);
+    finalMixGain.connect(audioContext.destination);
+
+    // Set initial values
+    updateFilterValues();
+    updateDelayValues();
+    updateSliderLabels();
+
+    // Event listeners for sliders
+    filterFrequency.addEventListener('input', () => { updateFilterValues(); updateSliderLabels(); });
+    filterQ.addEventListener('input', () => { updateFilterValues(); updateSliderLabels(); });
+    filterCurve.addEventListener('input', () => { updateFilterValues(); updateSliderLabels(); });
+    Array.from(oversampleRadios).forEach(radio => radio.addEventListener('change', () => {
+        updateFilterValues();
+        updateSliderLabels();
+    }));
+
+    delay1Time.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay1Feedback.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay1Panning.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay1WetDry.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+
+    delay2Time.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay2Feedback.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay2Panning.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay2WetDry.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+
+    delay3Time.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay3Feedback.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay3Volume1.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+    delay3Volume2.addEventListener('input', () => { updateDelayValues(); updateSliderLabels(); });
+
+    compressorRatio.addEventListener('input', updateCompressorValues);
+}
+function updateCompressorValues() {
+    // Update compressor parameters if you have controls for them
+    compressorNode.threshold.value = -24; // Example threshold
+    compressorNode.knee.value = 30;       // Example knee
+    compressorNode.ratio.value = parseFloat(compressorRatio.value);
+    compressorNode.attack.value = 0.003;  // Example attack
+    compressorNode.release.value = 0.25;  // Example release
+}
+
+        // Function to create a curve for wave shaper
+        function makeDistortionCurve(amount) {
+            const k = typeof amount === 'number' ? amount : 50;
+            const N = 44100;
+            const curve = new Float32Array(N);
+            const deg = Math.PI / 180;
+            const x = new Float32Array(N);
+            for (let i = 0; i < N; ++i) {
+                x[i] = i * 2 / N - 1;
+                curve[i] = (3 + k) * x[i] * 20 * deg / (Math.PI + k * Math.abs(x[i]));
+            }
+            return curve;
+        }
+function stopCapture() {
+    audioContext.close();
+}
+
+function updateFilterValues() {
+    const frequency = filterFrequency.value;
+    const Q = filterQ.value;
+    filterNode.frequency.value = frequency;
+    filterNode.Q.value = Q;
+
+    const curveAmount = filterCurve.value;
+    waveShaperNode.curve = makeDistortionCurve(curveAmount);
+
+    const oversample = document.querySelector('input[name="oversample"]:checked').value;
+    waveShaperNode.oversample = oversample;
+}
+
+function updateDelayValues() {
+    delayNode1.delayTime.value = delay1Time.value / 1000;
+    feedbackGain1.gain.value = delay1Feedback.value / 100;
+    panner1.pan.value = delay1Panning.value;
+    delayNode2.delayTime.value = delay2Time.value / 1000;
+    feedbackGain2.gain.value = delay2Feedback.value / 100;
+    panner2.pan.value = delay2Panning.value;
+    delayNode3.delayTime.value = delay3Time.value / 1000;
+    feedbackGain3.gain.value = delay3Feedback.value / 100;
+    gainNode1.gain.value = delay3Volume1.value / 100;
+    gainNode2.gain.value = delay3Volume2.value / 100;
+}
+
+
+    </script>
+</body>
+</html>

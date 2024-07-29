@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demoras</title>
+    
+    <link href='https://fonts.googleapis.com/css?family=Syne Mono' rel='stylesheet'>
+    <style>
+        body {
+            font-family: 'Syne Mono';
+            background-color: #cecece; /* Light grey background */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+        }
+        h1 {
+            color: #666;
+
+        }
+
+        .footer {
+    margin-top: 15px;
+    text-align: center;
+    width: 100%;
+            color: #666;
+    margin-bottom: 10px;
+}
+
+.footer-link {
+            color: #666;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
+
+        .module-container {
+            background-color: #444; /* Dark grey module background */
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .module-container h2 {
+            color: #fff; /* White text for module titles */
+            margin-bottom: 10px;
+        }
+
+        .slider-container {
+            margin-bottom: 15px;
+    width: 260px;
+        }
+
+        .slider-container label {
+            font-size: 16px;
+            color: #fff; /* White text for labels */
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .slider-container span {
+            font-size: 14px;
+            color: #fff; /* White text for slider values */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            background-color: #444; /* Green button */
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Syne Mono';
+    font-weight: bold;
+        }
+
+/* Slider styles */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 10px 0;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #555;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -4px;
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #666;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #555;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+input[type="range"]::-moz-range-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+    background: #444;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+input[type="range"]::-ms-fill-upper {
+    background: #444;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+input[type="range"]::-ms-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+    height: 8px;
+}
+
+input[type="range"]:focus::-ms-fill-lower {
+    background: #666;
+}
+
+input[type="range"]:focus::-ms-fill-upper {
+    background: #666;
+}
+    </style>
+</head>
+<body>
+    <h1>demoras</h1>
+    <button id="startButton">Start</button>
+
+    <div class="module-container">
+        <h2>Micro In</h2>
+        <div class="slider-container">
+            <label for="delayTimeSlider1">Delay (t): 
+                <span id="delayTimeValue1">1</span> seconds</label>
+            <input type="range" id="delayTimeSlider1" min="0" max="5" step="0.1" value="1">
+        </div>
+        <div class="slider-container">
+            <label for="feedbackSlider1">Feedback: 
+                <span id="feedbackValue1">0.7</span></label>
+            <input type="range" id="feedbackSlider1" min="0" max="1" step="0.01" value="0.7">
+        </div>
+        <div class="slider-container">
+            <label for="lowPassSlider1">Cutoff freq: 
+                <span id="cutoffValue1">450</span> Hz</label>
+            <input type="range" id="lowPassSlider1" min="20" max="10000" value="450">
+        </div>
+        <div class="slider-container">
+            <label for="resonanceSlider">Resonance: 
+                <span id="resonanceValue">3</span></label>
+            <input type="range" id="resonanceSlider" min="0.1" max="10" step="0.1" value="3">
+        </div>
+    </div>
+
+    <div class="module-container">
+        <h2>Modulator</h2>
+        <div class="slider-container">
+            <label for="microphoneVolumeSlider">Micro In: 
+            <span id="microphoneVolumeValue">50%</span></label>
+            <input type="range" id="microphoneVolumeSlider" min="0" max="1" step="0.01" value="0.5">
+        </div>
+        <div class="slider-container">
+            <label for="delayTimeSlider2">Delay 2 (t): 
+            <span id="delayTimeValue2">0.5</span> seconds</label>
+            <input type="range" id="delayTimeSlider2" min="0" max="5" step="0.1" value="0.5">
+        </div>
+        <div class="slider-container">
+            <label for="feedbackSlider2">Feedback (2): 
+            <span id="feedbackValue2">0.85</span></label>
+            <input type="range" id="feedbackSlider2" min="0" max="1" step="0.01" value="0.85">
+        </div>
+    </div>
+
+
+
+    <div class="footer">
+        &copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" class="footer-link">kdg/dkd</a>
+        <a href="d3moras.html" class="footer-link">➔ d3moras</a>
+    </div>
+
+    <script>
+        let audioContext, microphone, delayNode1, feedbackGain1, lowPassFilter1, delayNode2, feedbackGain2, microphoneGain, isMicrophoneOn = false;
+
+        document.getElementById('startButton').addEventListener('click', toggleMicrophone);
+        document.getElementById('lowPassSlider1').addEventListener('input', updateCutoffFrequency1);
+        document.getElementById('resonanceSlider').addEventListener('input', updateResonance);
+        document.getElementById('delayTimeSlider1').addEventListener('input', updateDelayTime1);
+        document.getElementById('feedbackSlider1').addEventListener('input', updateFeedbackAmount1);
+        document.getElementById('delayTimeSlider2').addEventListener('input', updateDelayTime2);
+        document.getElementById('feedbackSlider2').addEventListener('input', updateFeedbackAmount2);
+        document.getElementById('microphoneVolumeSlider').addEventListener('input', updateMicrophoneVolume);
+
+        function toggleMicrophone() {
+            if (isMicrophoneOn) {
+                stopMicrophone();
+                document.getElementById('startButton').textContent = 'Start';
+            } else {
+                startMicrophone();
+                document.getElementById('startButton').textContent = 'Stop';
+            }
+        }
+
+        function startMicrophone() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    
+                    // Module 1 setup
+                    delayNode1 = audioContext.createDelay(5.0);
+                    feedbackGain1 = audioContext.createGain();
+                    lowPassFilter1 = audioContext.createBiquadFilter();
+                    lowPassFilter1.type = 'lowpass';
+                    lowPassFilter1.frequency.value = document.getElementById('lowPassSlider1').value;
+                    lowPassFilter1.Q.value = document.getElementById('resonanceSlider').value;
+
+                    feedbackGain1.gain.value = document.getElementById('feedbackSlider1').value;
+                    delayNode1.delayTime.value = document.getElementById('delayTimeSlider1').value;
+
+                    // Connect nodes for Module 1
+                    microphone.connect(lowPassFilter1);
+                    lowPassFilter1.connect(delayNode1);
+                    delayNode1.connect(feedbackGain1);
+                    feedbackGain1.connect(lowPassFilter1); // Connect feedback loop for Module 1
+                    feedbackGain1.connect(audioContext.destination);
+
+                    // Module 2 setup
+                    delayNode2 = audioContext.createDelay(3.0);
+                    feedbackGain2 = audioContext.createGain();
+                    microphoneGain = audioContext.createGain(); // New gain node for microphone input in Module 2
+
+                    feedbackGain2.gain.value = document.getElementById('feedbackSlider2').value;
+                    delayNode2.delayTime.value = document.getElementById('delayTimeSlider2').value;
+
+                    // Connect nodes for Module 2
+                    // microphone.connect(delayNode2);
+                    microphone.connect(microphoneGain); // Connect microphone to microphoneGain
+                    microphoneGain.connect(delayNode2); // Connect microphoneGain to delayNode2
+                    delayNode1.connect(delayNode2); // Connect output of Module 1 to input of Module 2
+                    delayNode2.connect(feedbackGain2);
+                    feedbackGain2.connect(audioContext.destination);
+
+                    isMicrophoneOn = true;
+                })
+                .catch(err => console.error('Error accessing the microphone: ', err));
+        }
+
+        function stopMicrophone() {
+            if (audioContext) {
+                audioContext.close();
+                isMicrophoneOn = false;
+            }
+        }
+
+        function updateCutoffFrequency1() {
+            const cutoff = document.getElementById('lowPassSlider1').value;
+            lowPassFilter1.frequency.value = cutoff;
+            document.getElementById('cutoffValue1').textContent = cutoff;
+        }
+
+        function updateResonance() {
+            const resonance = document.getElementById('resonanceSlider').value;
+            lowPassFilter1.Q.value = resonance;
+            document.getElementById('resonanceValue').textContent = resonance;
+        }
+
+        function updateDelayTime1() {
+            const delayTime = document.getElementById('delayTimeSlider1').value;
+            delayNode1.delayTime.value = delayTime;
+            document.getElementById('delayTimeValue1').textContent = delayTime;
+        }
+
+        function updateFeedbackAmount1() {
+            const feedbackAmount = document.getElementById('feedbackSlider1').value;
+            feedbackGain1.gain.value = feedbackAmount;
+            document.getElementById('feedbackValue1').textContent = feedbackAmount;
+        }
+
+        function updateDelayTime2() {
+            const delayTime = document.getElementById('delayTimeSlider2').value;
+            delayNode2.delayTime.value = delayTime;
+            document.getElementById('delayTimeValue2').textContent = delayTime;
+        }
+
+        function updateFeedbackAmount2() {
+            const feedbackAmount = document.getElementById('feedbackSlider2').value;
+            feedbackGain2.gain.value = feedbackAmount;
+            document.getElementById('feedbackValue2').textContent = feedbackAmount;
+        }
+
+        function updateMicrophoneVolume() {
+            const volume = document.getElementById('microphoneVolumeSlider').value;
+            microphoneGain.gain.value = volume;
+            document.getElementById('microphoneVolumeValue').textContent = `${(volume * 100).toFixed(0)}%`;
+        }
+
+    </script>
+</body>
+</html>

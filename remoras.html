@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Syne Mono' rel='stylesheet'>
+    <title>remoras</title>
+    <style>
+        body {
+    font-family: 'Syne Mono';
+            background-color: #222;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #222;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        .controls {
+            margin: 20px;
+            width: 80%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+    font-family: 'Syne Mono';
+    font-weight: bold;
+            display: block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #666;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        .module {
+            background-color: #444;
+            color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .module h2 {
+            margin-top: 0;
+        }
+.footer {
+    margin-top: auto;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.footer-link {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
+
+
+/* Slider styles */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 10px 0;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #555;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -4px;
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #666;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #555;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+input[type="range"]::-moz-range-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+    background: #444;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+input[type="range"]::-ms-fill-upper {
+    background: #444;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+input[type="range"]::-ms-thumb {
+    border: 1px solid #444;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #888;
+    cursor: pointer;
+    height: 8px;
+}
+
+input[type="range"]:focus::-ms-fill-lower {
+    background: #666;
+}
+
+input[type="range"]:focus::-ms-fill-upper {
+    background: #666;
+}
+
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>remoras</h1>
+    </header>
+    <div class="controls">
+        <button id="toggleButton">Start</button>
+        <div class="module" id="filterModule">
+            <h2>Filter</h2>
+            <label for="cutoffFrequency">Cutoff Frequency: <span id="cutoffValue">320</span> Hz</label>
+            <input type="range" id="cutoffFrequency" min="20" max="10000" value="320">
+            <label for="resonance">Resonance: <span id="resonanceValue">1</span></label>
+            <input type="range" id="resonance" min="0" max="30" step="0.1" value="1">
+        </div>
+        <div class="module" id="lowpassModule">
+            <h2>Lowpass Delay</h2>
+            <label for="lowpassDelayTime">Delay Time: <span id="lowpassDelayValue">1</span> s</label>
+            <input type="range" id="lowpassDelayTime" min="0" max="5" step="0.01" value="1">
+            <label for="lowpassFeedback">Feedback: <span id="lowpassFeedbackValue">0.9</span></label>
+            <input type="range" id="lowpassFeedback" min="0" max="1" step="0.01" value="0.9">
+            <label for="lowpassWetDry">Wet/Dry Mix: <span id="lowpassWetDryValue">0.9</span></label>
+            <input type="range" id="lowpassWetDry" min="0" max="1" step="0.01" value="0.9">
+            <label for="lowpassPanner">Panner: <span id="lowpassPannerValue">-0.5</span></label>
+            <input type="range" id="lowpassPanner" min="-1" max="1" step="0.01" value="-0.5">
+        </div>
+        <div class="module" id="highpassModule">
+            <h2>Highpass Delay</h2>
+            <label for="highpassDelayTime">Delay Time: <span id="highpassDelayValue">0.5</span> s</label>
+            <input type="range" id="highpassDelayTime" min="0" max="5" step="0.01" value="0.5">
+            <label for="highpassFeedback">Feedback: <span id="highpassFeedbackValue">0.9</span></label>
+            <input type="range" id="highpassFeedback" min="0" max="1" step="0.01" value="0.9">
+            <label for="highpassWetDry">Wet/Dry Mix: <span id="highpassWetDryValue">0.9</span></label>
+            <input type="range" id="highpassWetDry" min="0" max="1" step="0.01" value="0.9">
+            <label for="highpassPanner">Panner: <span id="highpassPannerValue">0.5</span></label>
+            <input type="range" id="highpassPanner" min="-1" max="1" step="0.01" value="0.5">
+        </div>
+        <div class="module" id="mixerModule">
+            <h2>Mixer</h2>
+            <label for="volume1">Volume 1: <span id="volume1Value">0.5</span></label>
+            <input type="range" id="volume1" min="0" max="1" step="0.01" value="0.5">
+            <label for="volume2">Volume 2: <span id="volume2Value">0.5</span></label>
+            <input type="range" id="volume2" min="0" max="1" step="0.01" value="0.5">
+        </div>
+        <div class="module" id="compressorModule">
+            <h2>Compressor</h2>
+            <label for="compressorThreshold">Threshold: <span id="compressorThresholdValue">-34</span> dB</label>
+            <input type="range" id="compressorThreshold" min="-100" max="0" step="1" value="-34">
+            <label for="compressorRatio">Ratio: <span id="compressorRatioValue">20</span></label>
+            <input type="range" id="compressorRatio" min="1" max="20" step="0.1" value="20">
+            <label for="compressorAttack">Attack: <span id="compressorAttackValue">0.003</span> s</label>
+            <input type="range" id="compressorAttack" min="0.001" max="1" step="0.001" value="0.003">
+            <label for="compressorRelease">Release: <span id="compressorReleaseValue">0.25</span> s</label>
+            <input type="range" id="compressorRelease" min="0.01" max="1" step="0.01" value="0.25">
+        </div>
+        
+    </div>
+    <div class="footer">
+        &copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" class="footer-link">kdg/dkd</a>
+        <a href="temporas.html" class="footer-link">➔ temporas</a>
+    </div>
+    <script>
+        let audioContext;
+        let microphone;
+        let lowpassFilter, highpassFilter;
+        let lowpassDelay, highpassDelay;
+        let lowpassFeedbackGain, highpassFeedbackGain;
+        let lowpassWetGain, lowpassDryGain;
+        let highpassWetGain, highpassDryGain;
+        let lowpassPanner, highpassPanner;
+        let mixerGain1, mixerGain2, masterGain;
+        let compressor;
+
+        document.getElementById('toggleButton').addEventListener('click', function() {
+            let button = this;
+            if (button.textContent === "Start") {
+                button.textContent = "Stop";
+                startProcessing();
+            } else {
+                button.textContent = "Start";
+                stopProcessing();
+            }
+        });
+
+        async function startProcessing() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            microphone = audioContext.createMediaStreamSource(stream);
+
+            // Lowpass filter path
+            lowpassFilter = audioContext.createBiquadFilter();
+            lowpassFilter.type = "lowpass";
+            microphone.connect(lowpassFilter);
+
+            lowpassDelay = audioContext.createDelay(5.0);
+            lowpassFeedbackGain = audioContext.createGain();
+            lowpassWetGain = audioContext.createGain();
+            lowpassDryGain = audioContext.createGain();
+            lowpassPanner = audioContext.createStereoPanner();
+            lowpassFilter.connect(lowpassDelay);
+            lowpassDelay.connect(lowpassFeedbackGain);
+            lowpassFeedbackGain.connect(lowpassDelay);
+
+            lowpassFilter.connect(lowpassDryGain);
+            lowpassDelay.connect(lowpassWetGain);
+            lowpassWetGain.connect(lowpassPanner);
+            lowpassDryGain.connect(lowpassPanner);
+
+            // Highpass filter path
+            highpassFilter = audioContext.createBiquadFilter();
+            highpassFilter.type = "highpass";
+            microphone.connect(highpassFilter);
+
+            highpassDelay = audioContext.createDelay(5.0);
+            highpassFeedbackGain = audioContext.createGain();
+            highpassWetGain = audioContext.createGain();
+            highpassDryGain = audioContext.createGain();
+            highpassPanner = audioContext.createStereoPanner();
+            highpassFilter.connect(highpassDelay);
+            highpassDelay.connect(highpassFeedbackGain);
+            highpassFeedbackGain.connect(highpassDelay);
+
+            highpassFilter.connect(highpassDryGain);
+            highpassDelay.connect(highpassWetGain);
+            highpassWetGain.connect(highpassPanner);
+            highpassDryGain.connect(highpassPanner);
+
+            // Mixer
+            mixerGain1 = audioContext.createGain();
+            mixerGain2 = audioContext.createGain();
+            masterGain = audioContext.createGain();
+
+            lowpassPanner.connect(mixerGain1);
+            highpassPanner.connect(mixerGain2);
+
+            mixerGain1.connect(masterGain);
+            mixerGain2.connect(masterGain);
+
+            compressor = audioContext.createDynamicsCompressor();
+    masterGain.connect(compressor);
+    compressor.connect(audioContext.destination);
+
+            updateAudioParameters();
+        }
+
+        function stopProcessing() {
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+        }
+
+        function updateAudioParameters() {
+            const cutoff = document.getElementById('cutoffFrequency').value;
+            const resonance = document.getElementById('resonance').value;
+            const lowpassDelayTime = document.getElementById('lowpassDelayTime').value;
+            const lowpassFeedback = document.getElementById('lowpassFeedback').value;
+            const lowpassWetDry = document.getElementById('lowpassWetDry').value;
+            const lowpassPannerValue = document.getElementById('lowpassPanner').value;
+            const highpassDelayTime = document.getElementById('highpassDelayTime').value;
+            const highpassFeedback = document.getElementById('highpassFeedback').value;
+            const highpassWetDry = document.getElementById('highpassWetDry').value;
+            const highpassPannerValue = document.getElementById('highpassPanner').value;
+            const volume1 = document.getElementById('volume1').value;
+            const volume2 = document.getElementById('volume2').value;
+    const compressorThreshold = document.getElementById('compressorThreshold').value;
+    const compressorRatio = document.getElementById('compressorRatio').value;
+    const compressorAttack = document.getElementById('compressorAttack').value;
+    const compressorRelease = document.getElementById('compressorRelease').value;
+
+            lowpassFilter.frequency.setValueAtTime(cutoff, audioContext.currentTime);
+            lowpassFilter.Q.setValueAtTime(resonance, audioContext.currentTime);
+            highpassFilter.frequency.setValueAtTime(cutoff, audioContext.currentTime);
+            highpassFilter.Q.setValueAtTime(resonance, audioContext.currentTime);
+
+            lowpassDelay.delayTime.setValueAtTime(lowpassDelayTime, audioContext.currentTime);
+            lowpassFeedbackGain.gain.setValueAtTime(lowpassFeedback, audioContext.currentTime);
+            lowpassWetGain.gain.setValueAtTime(lowpassWetDry, audioContext.currentTime);
+            lowpassDryGain.gain.setValueAtTime(1 - lowpassWetDry, audioContext.currentTime);
+            lowpassPanner.pan.setValueAtTime(lowpassPannerValue, audioContext.currentTime);
+
+            highpassDelay.delayTime.setValueAtTime(highpassDelayTime, audioContext.currentTime);
+            highpassFeedbackGain.gain.setValueAtTime(highpassFeedback, audioContext.currentTime);
+            highpassWetGain.gain.setValueAtTime(highpassWetDry, audioContext.currentTime);
+            highpassDryGain.gain.setValueAtTime(1 - highpassWetDry, audioContext.currentTime);
+            highpassPanner.pan.setValueAtTime(highpassPannerValue, audioContext.currentTime);
+
+            mixerGain1.gain.setValueAtTime(volume1, audioContext.currentTime);
+            mixerGain2.gain.setValueAtTime(volume2, audioContext.currentTime);
+
+    compressor.threshold.setValueAtTime(compressorThreshold, audioContext.currentTime);
+    compressor.ratio.setValueAtTime(compressorRatio, audioContext.currentTime);
+    compressor.attack.setValueAtTime(compressorAttack, audioContext.currentTime);
+    compressor.release.setValueAtTime(compressorRelease, audioContext.currentTime);
+
+            // Update the labels with the current values
+            document.getElementById('cutoffValue').textContent = cutoff;
+            document.getElementById('resonanceValue').textContent = resonance;
+            document.getElementById('lowpassDelayValue').textContent = lowpassDelayTime;
+            document.getElementById('lowpassFeedbackValue').textContent = lowpassFeedback;
+            document.getElementById('lowpassWetDryValue').textContent = lowpassWetDry;
+            document.getElementById('lowpassPannerValue').textContent = lowpassPannerValue;
+            document.getElementById('highpassDelayValue').textContent = highpassDelayTime;
+            document.getElementById('highpassFeedbackValue').textContent = highpassFeedback;
+            document.getElementById('highpassWetDryValue').textContent = highpassWetDry;
+            document.getElementById('highpassPannerValue').textContent = highpassPannerValue;
+            document.getElementById('volume1Value').textContent = volume1;
+            document.getElementById('volume2Value').textContent = volume2;
+    document.getElementById('compressorThresholdValue').textContent = compressorThreshold;
+    document.getElementById('compressorRatioValue').textContent = compressorRatio;
+    document.getElementById('compressorAttackValue').textContent = compressorAttack;
+    document.getElementById('compressorReleaseValue').textContent = compressorRelease;
+        }
+
+        document.querySelectorAll('input[type="range"]').forEach(input => {
+            input.addEventListener('input', updateAudioParameters);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Zintetizador Zuztractivo Zuper Zimple">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ZZZZ</title>
+  <link rel="icon" href="favicon.ico">
+  <link href='https://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet'>
+  <style>
+    body {
+      background-color: #333; /* Dark background for an industrial feel */
+      color: #ccc; /* Light text for contrast */
+      font-family: 'Aldrich';
+      font-size: 14px;
+      /* margin: 0; */
+    }
+
+
+    .container {
+          display: flex;
+          margin: 10px;
+          padding: 10px;
+          align-items: center;
+          margin-left: 10px;
+          width: 90%;
+          margin: 0 auto;
+
+        }
+
+    .oscillator-container,
+    .effects-container,
+    .pulso-container,
+    .master-controls {
+      width: 20%;
+      background-color: #444; /* Darker element backgrounds for depth */
+      padding: 10px;
+      border: 1px solid #555; /* Borders for a sharp, defined look */
+      border-radius: 5px; /* Slightly rounded corners */
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5); /* Deeper shadows for a 3D effect */
+      margin-bottom: 10px;
+      margin-right: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pulso-container {
+        background-color: #2c2c2c
+    }
+    .controls {
+      margin-bottom: 20px;
+    }
+
+    @media only screen and (max-width: 768px) {
+        /* Adjustments for smaller screens */
+        body {
+            font-size: 12px; /* Adjust font size for better readability */
+        }
+
+        .container { 
+            flex-direction: column;
+          }
+
+        .oscillator-container,
+        .effects-container,
+        .pulso-container,
+        .master-controls {
+            width: 100%; /* Full width for smaller screens */
+            margin-right: 0; /* Remove right margin for the last item in the row */
+        }
+    }
+
+    /* Styling for the sliders */
+    .slider {
+        display: block;
+        height: 150px;
+        width: 20px;
+        margin: 10px auto;
+        -webkit-appearance: slider-vertical;
+        background: linear-gradient(to bottom, #ddd, #aaa); /* Metallic grey gradient */
+        border: 1px solid #777; /* Border color */
+        border-radius: 5px; /* Rounded corners */
+    }
+
+    /* Styling for the slider thumbs (handles) */
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #ccc; /* Thumb color */
+        border: 1px solid #777; /* Thumb border color */
+        border-radius: 50%; /* Circular shape */
+        cursor: pointer;
+    }
+
+    /* Hover effect for the sliders */
+    .slider:hover {
+        background: linear-gradient(to bottom, #eee, #777); /* Lighter gradient on hover */
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        padding: 5px;
+    }
+
+    button {
+        width: 100px;
+        background-color: #666; /* Button backgrounds */
+        color: #ddd; /* Button text color */
+        border: none; /* Remove default borders */
+        padding: 10px 20px;
+        margin: 0 10px;
+        text-transform: uppercase; 
+        border-radius: 5px; /* Consistent rounded corners */
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5); /* Button shadows for depth */
+        cursor: pointer; /* Pointer cursor on hover */
+        overflow: hidden;
+        font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #777; /* Slightly lighter button background on hover */
+    }
+
+    button.reload {
+        width: 100px;
+    }
+
+    h1, h2, h3 {
+      text-transform: uppercase; /* Uppercase headings for a strong presence */
+      letter-spacing: 2px; /* Increased letter spacing for a mechanical look */
+      text-align: center;
+      color: #e6e6e6; 
+    }
+
+    h1 {
+      cursor:help;
+    }
+    h3 {
+      
+    animation: buzz 0.1s infinite alternate;
+    }
+    @keyframes buzz {
+      0% {
+        transform: translateX(0);
+        /* transform: translateY(0); */
+      }
+      25% {
+        transform: translateX(1px);
+        /* transform: translateY(0); */
+      }
+      50% {
+        transform: translateX(1px);
+        transform: translateY(1px);
+      }
+      75% {
+        transform: translateX(-1px);
+        /* transform: translateY(0); */
+      }
+      100% {
+        transform: translateX(0);
+        transform: translateY(0);
+      }
+    }
+
+    .master-controls label {
+      margin-bottom: 10px;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    #wetDryMixSlider {
+      display: none;
+    }
+    .slider-item {
+        margin-right: 10px; /* Adjust the margin as needed */
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    button.beeping {
+        background-color: #3e3e3e; /* Red color when beeping */
+    }
+
+    button:not(.beeping) {
+        background-color: #666; /* Default button background color */
+    }
+
+    .combo-box {
+        margin-top: 10px;
+    }
+
+    .slider-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .slider-container input {
+        margin: 0 10px;
+    }
+
+    footer  {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            text-align: center;
+            justify-content: center;
+            font-size: small;
+
+
+        }
+
+    /* Add these styles to your existing CSS */
+    @keyframes pulsate {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    #pulsoLabel {
+        animation: pulsate 1s infinite;
+        cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+  <h1 onclick="alert('Haz clic en Dale, cambia los parámetros del sintetizador y del filtro y añade efectos. Busca drones en las frecuencias bajas, con los osciladores ligeramente desafinados, con el feedback a tope. Y entonces haz clic en Dale otra vez. Y otra vez.')">ZZZZ</h1>
+  <h3>Zintetizador Zuztractivo Zuper Zimple</h3>
+  <div class="button-container">
+    <button onclick="playSounds()">Dale</button>
+    <button onclick="stopSounds(); resetClickCount()">Zas</button>
+    <button onclick="reloadPage()">Plas</button>
+    <!-- <button onclick="loadMode()">Pulso</button> -->
+  </div>
+  <div class="container">
+    <!-- <div class="pulso-container">
+      <div class="controls">
+        <h4 id="pulsoLabel" onclick="toggleBeep()">Pulsar</h4>
+        <label>Tonito: <span id="beepPitchLabel">440Hz</span></label>
+        <br>
+        <br>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="beepPitchSlider">Tono:</label>
+            <input type="range" min="50" max="1000" value="440" step="2" id="beepPitchSlider" oninput="adjustBeepPitch(this.value)" step="5">
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="durationSlider">Puerta:</label>
+            <input type="range" id="durationSlider" min="0.1" max="3.0" step="0.1" value="0.5">                
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="durationSlider2">Huecos:</label>
+            <input type="range" id="durationSlider2" min="0.1" max="3.0" step="0.1" value="0.5">                
+          </div>
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-item">
+              <label for="beepRampDurationSlider">Liberar:</label>
+              <input type="range" min="0.1" max="3.0" value="0.5" step="0.1" id="beepRampDurationSlider" oninput="adjustBeepRampDuration(this.value)">
+            </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="oscillator-container">
+      <div class="controls">
+        <h4>Osc 1</h4>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="waveformType1">Onda:</label>
+            <select id="waveformType1" onchange="changeWaveformType(1, this.value)">
+              <option value="sawtooth">Sierra</option>
+              <option value="sine">Sinusoidal</option>
+              <option value="square">Cuadrada</option>
+              <option value="triangle">Triangular</option>
+            </select>
+          </div>
+        </div>
+        <br>
+        <label>Frecuencia: <span id="frequency1">440Hz</span></label>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="pitchSlider1">Frecuencia:</label>
+            <input type="range" min="25" max="1000" value="440" step="2" class="slider" id="pitchSlider1" oninput="adjustPitch(1, this.value)" step="5">
+          </div>
+          <div class="slider-item">
+            <label for="volumeSlider1">Volumen:</label>
+            <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="volumeSlider1" oninput="adjustVolume(1, this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="oscillator-container">
+      <div class="controls">
+        <h4>Osc 2</h4>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="waveformType2">Onda:</label>
+            <select id="waveformType2" onchange="changeWaveformType(2, this.value)">
+              <option value="sawtooth">Sierra</option>
+              <option value="sine">Sinusoidal</option>
+              <option value="square">Cuadrada</option>
+              <option value="triangle">Triangular</option>
+            </select>
+          </div>
+        </div>
+        <br>
+        <label>Frecuencia: <span id="frequency2">440Hz</span></label>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="pitchSlider2">Frecuencia:</label>
+            <input type="range" min="25" max="1000" value="440" step="2" class="slider" id="pitchSlider2" oninput="adjustPitch(2, this.value)" step="5">
+          </div>
+          <div class="slider-item">
+            <label for="volumeSlider2">Volumen:</label>
+            <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="volumeSlider2" oninput="adjustVolume(2, this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="master-controls">
+      <div class="controls">
+        <h4>Filtro</h4>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="filterType">Tipo:</label>
+            <select id="filterType" onchange="changeFilterType(this.value)">
+              <option value="lowpass">LP</option>
+              <option value="highpass">HP</option>
+              <option value="bandpass">BP</option>
+              <option value="peaking">Peak</option>
+              <option value="notch">Notch</option>
+            </select>
+          </div>
+          </div>
+          <br>
+          <label>Frecuencia: <span id="filterFrequency">1000Hz</span></label>
+
+          <div class="slider-group">
+            <div class="slider-item">
+              <label for="filterSlider">Frecuencia:</label>
+              <input type="range" min="50" max="1000" value="1000" class="slider" id="filterSlider" oninput="adjustFilter(this.value)">
+            </div>
+            <div class="slider-group">
+              <div class="slider-item">
+                <label for="resonanceSlider">Resonancia:</label>
+                <input type="range" min="0.1" max="20" value="1" step="0.1" class="slider" id="resonanceSlider" oninput="adjustResonance(this.value)">
+              </div>
+            </div>
+            <!-- <div class="slider-group">
+                <div class="slider-item">
+                  <label for="filterTransitionSlider">Filter Transition Duration:</label>
+                  <input type="range" min="0.1" max="1.0" value="0.4" step="0.1" class="slider" id="filterTransitionSlider" oninput="adjustFilterTransition(this.value)">
+                </div>
+              </div> -->
+              
+        </div>
+      </div>
+    </div>
+
+    <div class="effects-container">
+      <div class="controls">
+        <h4>Delay</h4>
+        <!-- <label for="wetDryMixSlider">Reverb:</label> -->
+        <input type="range" min="0" max="1" value="0" step="0.01" id="wetDryMixSlider" oninput="adjustWetDryMix(this.value)">      
+        <br>
+        <br>
+        <br>
+        <div class="slider-group">
+          <div class="slider-item">
+            <label for="delaySlider">Tiempo:</label>
+            <input type="range" id="delaySlider" min="0.1" max="5.0" step="0.1" value="0.5" class="slider" oninput="adjustDelayTime(this.value)">              
+          </div>
+          <div class="slider-group">
+            <div class="slider-item">
+              <label for="feedbackSlider">Feedback:</label>
+              <input type="range" min="0" max="1" value="0" step="0.01" class="slider" id="feedbackSlider" oninput="adjustFeedback(this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+ 
+<footer>
+  <p><a href="index.html" target="_self" >disonancias</a></p>
+  <p>&copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" target="_self" >kdg/dkd</a></p>
+</footer>
+ 
+
+  <script>
+    let clickCount = 0;
+    var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    var oscillators = [null, null];
+    var gainNodes = [null, null];
+    var filterNode = audioContext.createBiquadFilter();
+    filterNode.type = 'lowpass';
+    filterNode.frequency.setValueAtTime(2000, audioContext.currentTime);
+    filterNode.Q.setValueAtTime(1, audioContext.currentTime);
+    const delayNode = audioContext.createDelay();
+    delayNode.connect(audioContext.destination);
+
+    function playSounds() {
+      clickCount++;
+      for (var i = 0; i < 2; i++) {
+        oscillators[i] = audioContext.createOscillator();
+        gainNodes[i] = audioContext.createGain();
+        gainNodes[i].gain.setValueAtTime(0.5, audioContext.currentTime); // Set initial volume to 50%
+        oscillators[i].frequency.setValueAtTime(440, audioContext.currentTime); // Set the initial frequency to C3
+        oscillators[i].type = 'sawtooth';
+        oscillators[i].connect(gainNodes[i]);
+        gainNodes[i].connect(filterNode);
+        oscillators[i].start();
+      }
+      filterNode.connect(delayNode);
+
+      for (var i = 0; i < 2; i++) {
+        oscillators[i].connect(delayNode);
+      }
+
+      // Update button text
+      document.querySelector('button').innerText = `Dale x${clickCount}`;
+    }
+
+    function adjustDelayTime(delayTime) {
+  delayNode.delayTime.setValueAtTime(delayTime, audioContext.currentTime);
+}
+
+document.getElementById('delaySlider').addEventListener('input', function () {
+  const delayTime = parseFloat(this.value);
+  adjustDelayTime(delayTime);
+});
+
+
+    let feedbackGain = audioContext.createGain();
+    feedbackGain.gain.setValueAtTime(0.7, audioContext.currentTime); // Set initial feedback level
+
+    // Connect the feedback loop
+    delayNode.connect(feedbackGain);
+    feedbackGain.connect(delayNode);
+
+
+// Create a ConvolverNode
+const convolverNode = audioContext.createConvolver();
+
+// Load an impulse response (replace 'your-impulse-response.wav' with the actual file)
+fetch('./batcave.wav')
+  .then(response => response.arrayBuffer())
+  .then(buffer => audioContext.decodeAudioData(buffer))
+  .then(decodedBuffer => {
+    convolverNode.buffer = decodedBuffer;
+  })
+  .catch(error => console.error('Error loading impulse response:', error));
+
+// Connect the ConvolverNode to the audio graph
+convolverNode.connect(audioContext.destination);
+
+
+
+    function adjustPitch(oscillatorIndex, pitch) {
+      if (oscillators[oscillatorIndex - 1]) {
+        oscillators[oscillatorIndex - 1].frequency.setValueAtTime(pitch, audioContext.currentTime);
+        document.getElementById('frequency' + oscillatorIndex).textContent = pitch + 'Hz';
+      }
+    }
+
+    function adjustVolume(oscillatorIndex, volume) {
+      if (gainNodes[oscillatorIndex - 1]) {
+        gainNodes[oscillatorIndex - 1].gain.setValueAtTime(volume, audioContext.currentTime);
+      }
+    }
+
+    function changeFilterType(type) {
+      filterNode.type = type;
+    }
+
+    function adjustFilter(frequency) {
+        frequency = parseFloat(frequency);
+        filterNode.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        filterNode.frequency.linearRampToValueAtTime(frequency, audioContext.currentTime + 0.4); // Adjust the duration as needed
+            // Update the frequency label
+            const frequencyLabel = document.getElementById('filterFrequency');
+            frequencyLabel.textContent = frequency.toFixed(2) + 'Hz';
+
+
+        }
+
+function adjustResonance(q) {
+  filterNode.Q.setValueAtTime(q, audioContext.currentTime);
+//   filterNode.Q.linearRampToValueAtTime(q, audioContext.currentTime + 0.2); // Adjust the duration as needed
+}
+
+    function stopSounds() {
+      for (var i = 0; i < 2; i++) {
+        if (oscillators[i]) {
+          oscillators[i].stop();
+          oscillators[i].disconnect(gainNodes[i]);
+          gainNodes[i].disconnect(filterNode);
+        }
+      }
+      filterNode.disconnect(audioContext.destination);
+    }
+
+    function resetClickCount() {
+        // Reset click count
+        clickCount = 0;
+
+        // Update Dale button text
+        document.querySelector('button').innerText = 'Dale';
+    }
+    function changeWaveformType(oscillatorIndex, type) {
+      if (oscillators[oscillatorIndex - 1]) {
+        oscillators[oscillatorIndex - 1].type = type;
+      }
+    }
+
+    function adjustFeedback(feedbackLevel) {
+    feedbackGain.gain.setValueAtTime(feedbackLevel, audioContext.currentTime);
+  }
+
+// Function to adjust wet/dry mix
+function adjustWetDryMix(mix) {
+  const dryGain = 1 - mix;
+  const wetGain = mix;
+  //convolverNode.disconnect(); // Disconnect the ConvolverNode temporarily
+  // Create GainNodes for dry and wet signals
+  const dryGainNode = audioContext.createGain();
+  const wetGainNode = audioContext.createGain();
+  // Connect the ConvolverNode to the wet GainNode
+  convolverNode.connect(wetGainNode);
+  // Connect the wet and dry GainNodes to the destination
+  dryGainNode.connect(audioContext.destination);
+  wetGainNode.connect(audioContext.destination);
+  // Set the gains based on the mix
+  dryGainNode.gain.value = dryGain;
+  wetGainNode.gain.value = wetGain;
+}
+
+function reloadPage() {
+  location.reload();
+}
+
+let isBeeping = false;
+let beepGainNode;
+let beepInterval;
+
+function initializeBeep() {
+  beepGainNode = audioContext.createGain();
+  beepGainNode.connect(audioContext.destination);
+}
+
+function toggleBeep() {
+  if (clickCount === 0) {
+    playSounds();
+  }
+
+  if (isBeeping) {
+    stopBeep();
+    // Set background color when beeping is inactive
+    document.querySelector('.pulso-container').style.backgroundColor = '#2c2c2c';
+  } else {
+    startBeep();
+    // Set background color when beeping is active (dark shade of green)
+    document.querySelector('.pulso-container').style.backgroundColor = '#444';
+  }
+
+  // Update the pulso label
+  const pulsoLabel = document.getElementById('pulsoLabel');
+  pulsoLabel.innerText = isBeeping ? 'Pulso (ON)' : 'Pulso (NO)';
+}
+
+
+
+
+
+
+function startBeep() {
+  const beepDuration = parseFloat(document.getElementById('durationSlider').value);
+  const stopDuration = parseFloat(document.getElementById('durationSlider2').value);
+  const releaseDuration = parseFloat(document.getElementById('beepRampDurationSlider').value);
+  const beepPitch = parseFloat(document.getElementById('beepPitchSlider').value);
+
+  initializeBeep(); // Initialize the beep gain node
+  beepGainNode.gain.setValueAtTime(1, audioContext.currentTime);
+  beepGainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + releaseDuration);
+
+  // Start the beep for both oscillators with the adjusted pitch
+  for (var i = 0; i < 2; i++) {
+    if (oscillators[i]) {
+      oscillators[i].frequency.setValueAtTime(beepPitch, audioContext.currentTime);
+      oscillators[i].connect(beepGainNode);
+    }
+  }
+
+  isBeeping = true;
+
+  // Set up an interval to stop the beep after the specified duration
+  beepInterval = setInterval(function () {
+    stopBeep();
+    setTimeout(function () {
+      startBeep();
+    }, stopDuration * 1000); // Convert seconds to milliseconds
+  }, (beepDuration + stopDuration) * 1000); // Convert seconds to milliseconds
+}
+
+
+function stopBeep() {
+  beepGainNode.gain.cancelScheduledValues(audioContext.currentTime);
+  beepGainNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+  // Disconnect the beep gain node from both oscillators
+  for (var i = 0; i < 2; i++) {
+    if (oscillators[i]) {
+      oscillators[i].disconnect(beepGainNode);
+    }
+  }
+
+  isBeeping = false;
+  clearInterval(beepInterval);
+}
+
+
+document.getElementById('durationSlider').addEventListener('input', function () {
+  if (isBeeping) {
+    stopBeep();
+    startBeep();
+  }
+  updateButtonColor();
+});
+
+function adjustFilterTransition(transitionDuration) {
+  const currentTime = audioContext.currentTime;
+  const targetFrequency = filterNode.frequency.value;
+  
+  // Clear existing scheduled values
+  filterNode.frequency.cancelScheduledValues(currentTime);
+  
+  // Set initial value
+  filterNode.frequency.setValueAtTime(targetFrequency, currentTime);
+
+  // Linear ramp to the target frequency over the specified duration
+  filterNode.frequency.linearRampToValueAtTime(targetFrequency, currentTime + parseFloat(transitionDuration));
+}
+
+function adjustBeepRampDuration(rampDuration) {
+  const currentTime = audioContext.currentTime;
+
+  // Clear existing scheduled values
+  beepGainNode.gain.cancelScheduledValues(currentTime);
+
+  // Set initial value
+  beepGainNode.gain.setValueAtTime(beepGainNode.gain.value, currentTime);
+
+  // Linear ramp to zero over the specified duration
+  beepGainNode.gain.linearRampToValueAtTime(0, currentTime + parseFloat(rampDuration));
+}
+
+document.getElementById('beepRampDurationSlider').addEventListener('input', function () {
+  adjustBeepRampDuration(this.value);
+});
+
+document.getElementById('beepRampDurationSlider').addEventListener('change', function () {
+  if (!isBeeping) {
+    adjustBeepRampDuration(this.value);
+  }
+});
+
+
+
+
+
+const filterTransitionSlider = document.getElementById('filterTransitionSlider');
+
+filterTransitionSlider.addEventListener('input', function () {
+  adjustFilterTransition(this.value);
+});
+
+filterTransitionSlider.addEventListener('change', function () {
+  adjustFilterTransition(this.value);
+});
+
+function adjustBeepPitch(pitch) {
+  if (isBeeping) {
+    for (var i = 0; i < 2; i++) {
+      if (oscillators[i]) {
+        oscillators[i].frequency.setValueAtTime(pitch, audioContext.currentTime);
+      }
+    }
+    document.getElementById('beepPitchLabel').textContent = pitch + 'Hz';
+  }
+}
+
+
+function loadMode() {
+      // Specify the URL of the HTML file you want to redirect to
+      const indexHTMLURL = 'pulso.html';
+
+      // Redirect to the specified URL
+      window.location.href = indexHTMLURL;
+    }
+// function euclideanRhythm(pulses, steps) {
+//   if (pulses > steps || pulses === 0 || steps === 0) {
+//     return "Invalid input";
+//   }
+//   let pattern = [];
+//   let counts = new Array(steps).fill(0);
+//   for (let i = 0; i < steps; i++) {
+//     counts[i] = Math.round(i * pulses / steps);
+//   }
+//   for (let j = 0; j < pulses; j++) {
+//     pattern.push(counts[j] % steps);
+//   }
+//   pattern.sort((a, b) => a - b);
+//   return pattern;
+// }
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Share Tech Mono' rel='stylesheet'>
+    <title>PASITRON</title>
+    <style>
+        body {
+            font-family: 'Share Tech Mono';
+            background-color: #282c34;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            
+            text-shadow: 3px 3px 10px rgb(255, 255, 255);
+        }
+        select, input[type="number"], input[type="range"], button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            font-family: 'Share Tech Mono';
+            border-radius: 20%;
+            background-color: #dbdbdb;
+        }
+
+        .offset-inputs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .offset-inputs input {
+            width: 60px;
+            margin: 5px;
+        }
+
+        #lengthValue {
+            font-weight: bold;
+        }
+        
+        button {
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            transform: rotate(-10deg); /* Adjust the angle as needed */
+            transform-origin: 50% 50%; /* Set the origin for the transformation */
+            margin-top: 10px; /* Optional: add some spacing */
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            width: 100%;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .footer-link {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>PASITRON</h1>
+<label>wave:</label>
+<input type="radio" id="triangle" name="waveform" value="triangle" checked>
+<label for="triangle">tri</label>
+<input type="radio" id="sine" name="waveform" value="sine" >
+<label for="sine">sin</label>
+<input type="radio" id="square" name="waveform" value="square">
+<label for="square">sqr</label>
+<input type="radio" id="sawtooth" name="waveform" value="sawtooth">
+<label for="sawtooth">saw</label>
+<br>
+<label for="attackSlider">attack: <span id="attackValue">0.01</span></label>
+<input type="range" id="attackSlider" min="0.01" max="1" step="0.01" value="0.01">
+
+<label for="releaseSlider">decay: <span id="releaseValue">0.01</span></label>
+<input type="range" id="releaseSlider" min="0.01" max="1" step="0.01" value="0.01">
+<br>
+<label for="rootNote">root:</label>
+<select id="rootNote">
+    <option value="48" selected>C3</option>
+    <option value="49">C#3</option>
+    <option value="50">D3</option>
+    <option value="51">D#3</option>
+    <option value="52">E3</option>
+    <option value="53">F3</option>
+    <option value="54">F#3</option>
+    <option value="55">G3</option>
+    <option value="56">G#3</option>
+    <option value="57">A3</option>
+    <option value="58">A#3</option>
+    <option value="59">B3</option>
+    <option value="60">C4</option>
+    <option value="61">C#4</option>
+    <option value="62">D4</option>
+    <option value="63">D#4</option>
+    <option value="64">E4</option>
+    <option value="65">F4</option>
+    <option value="66">F#4</option>
+    <option value="67">G4</option>
+    <option value="68">G#4</option>
+    <option value="69">A4</option>
+    <option value="70">A#4</option>
+    <option value="71">B4</option>
+    <option value="72">C5</option>
+</select>
+<label for="lengthSlider">step (ms): <span id="lengthValue">300</span></label>
+<input type="range" id="lengthSlider" min="100" max="5000" step="50" value="300">
+<br>
+<label for="stepNotes">semitone offset:</label>
+<div class="offset-inputs">
+    <input type="number" id="offset1" placeholder="0" value="0">
+    <input type="number" id="offset2" placeholder="4" value="4">
+    <input type="number" id="offset3" placeholder="7" value="7">
+    <input type="number" id="offset4" placeholder="">
+    <input type="number" id="offset5" placeholder="">
+    <input type="number" id="offset6" placeholder="">
+    <input type="number" id="offset7" placeholder="">
+    <input type="number" id="offset8" placeholder="">
+</div>
+
+<br>
+
+<button id="playButton">play</button>
+
+<br>
+
+<span id="currentNote">C2</span>
+
+<div class="footer">
+    <p>&copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/">kdg/dkd</a></p>
+</div>
+
+<script>
+let audioContext;
+let intervalId;
+const offsets = [];
+let oscillator; // Declare oscillator here
+
+document.getElementById('playButton').addEventListener('click', togglePlay);
+
+document.getElementById('lengthSlider').addEventListener('input', function() {
+    document.getElementById('lengthValue').innerText = this.value;
+    if (intervalId) {
+        updateSequence();
+    }
+});
+
+const offsetInputs = document.querySelectorAll('.offset-inputs input');
+offsetInputs.forEach(input => {
+    input.addEventListener('input', updateSequence);
+});
+
+const waveformRadios = document.querySelectorAll('input[name="waveform"]');
+waveformRadios.forEach(radio => {
+    radio.addEventListener('change', updateWaveform);
+});
+
+function updateWaveform() {
+    // This function will be called when the waveform selection changes
+}
+
+function togglePlay() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        document.getElementById('playButton').innerText = 'play';
+    } else {
+        startSynth();
+        document.getElementById('playButton').innerText = 'stop';
+    }
+}
+
+function startSynth() {
+    updateOffsets();
+    let noteIndex = 0;
+    const length = parseFloat(document.getElementById('lengthSlider').value);
+
+    intervalId = setInterval(() => {
+        if (noteIndex < offsets.length) {
+            const rootNote = parseInt(document.getElementById('rootNote').value);
+            const currentNote = rootNote + offsets[noteIndex];
+            playSound(currentNote, length / 1000);
+            document.getElementById('currentNote').innerText = `${midiNoteToName(currentNote)}`;
+            noteIndex++;
+        } else {
+            noteIndex = 0; // Loop back to the first note
+            const rootNote = parseInt(document.getElementById('rootNote').value);
+            const currentNote = rootNote + offsets[noteIndex];
+            playSound(currentNote, length / 1000);
+            document.getElementById('currentNote').innerText = `${midiNoteToName(currentNote)}`;
+            noteIndex++;
+        }
+    }, length);
+}
+
+function updateOffsets() {
+    offsets.length = 0; // Clear previous offsets
+    for (let i = 1; i <= 8; i++) {
+        const offsetValue = document.getElementById(`offset${i}`).value;
+        if (offsetValue) {
+            offsets.push(parseInt(offsetValue));
+        }
+    }
+}
+
+function updateSequence() {
+    if (intervalId) {
+        clearInterval(intervalId);
+        startSynth();
+    }
+}
+
+// Add these lines to your existing JavaScript code
+
+document.getElementById('attackSlider').addEventListener('input', function() {
+    document.getElementById('attackValue').innerText = this.value;
+});
+
+document.getElementById('releaseSlider').addEventListener('input', function() {
+    document.getElementById('releaseValue').innerText = this.value;
+});
+
+function playSound(note, length) {
+    const oscillator = audioContext.createOscillator(); // Create a new oscillator for each note
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    const selectedWaveform = document.querySelector('input[name="waveform"]:checked').value;
+    oscillator.type = selectedWaveform; // Set the waveform type
+
+    oscillator.frequency.setValueAtTime(noteToFrequency(note), audioContext.currentTime);
+
+    // Get attack and release values from sliders
+    const attackTime = parseFloat(document.getElementById('attackSlider').value);
+    const releaseTime = parseFloat(document.getElementById('releaseSlider').value);
+
+    // Set up the gain envelope
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime); // Start at 0 gain
+    gainNode.gain.linearRampToValueAtTime(1, audioContext.currentTime + attackTime); // Ramp up to full volume
+    gainNode.gain.setTargetAtTime(0, audioContext.currentTime + length - releaseTime, 0.1); // Ramp down to 0 before the note ends
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + length);
+}
+
+
+
+function noteToFrequency(note) {
+    return 440 * Math.pow(2, (note - 69) / 12);
+}
+
+function midiNoteToName(note) {
+    const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const octave = Math.floor(note / 12) - 1;
+    return `${noteNames[note % 12]}${octave}`;
+}
+</script>
+
+</body>
+</html>

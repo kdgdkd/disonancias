@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&display=swap" rel="stylesheet">     
+    <title>nlz> demoras</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            font-family: "VT323", monospace;
+            background-color: #000000; /* Fallback color */
+            position: relative; /* For absolute positioning of dots */
+        }
+        .vt323-regular {
+            font-family: "VT323", monospace;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .snake {
+            position: absolute;
+            width: 100px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            text-decoration: none;
+            white-space: nowrap;
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.5); /* Longer shadow */
+            transition: transform 0.2s, box-shadow 0.2s; /* Smooth transitions */
+            border-radius: 20%;
+        }
+
+        .snake:hover {
+            transform: scale(1.2); /* Increase size on hover */
+            font-weight: bold;
+        }
+
+        .snake:active {
+            transform: translateY(2px); /* Push effect on click */
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* Reduce shadow on click */
+        }
+
+        .dot {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            animation: fall linear infinite; /* Falling animation */
+            z-index: -1;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .snake {
+                width: 60px; /* Smaller width for mobile */
+                height: 18px; /* Smaller height for mobile */
+                line-height: 18px; /* Center text vertically */
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const snakeData = [
+            { label: 'sampler_monster', link: 'https://www.edpanfleto.com/disonancias/sampler_monster.html' },
+            { label: 'demoras', link: 'https://www.edpanfleto.com/disonancias/demoras.html' },
+            { label: 'remoras', link: 'https://www.edpanfleto.com/disonancias/remoras.html' },
+            { label: 'temporas', link: 'https://www.edpanfleto.com/disonancias/temporas.html' },
+            { label: 'd3moras', link: 'https://www.edpanfleto.com/disonancias/d3moras.html' },
+            { label: 'temporas', link: 'https://www.edpanfleto.com/disonancias/temporas.html' }
+        ];
+
+        const snakes = [];
+        const snakeLength = 6;
+        const dropDelay = 20; 
+
+        function createSnakes() {
+            for (let i = 0; i < window.innerWidth / (snakeLength * 20); i++) {
+                const snake = [];
+                const snakeColor = getRandomGrey();
+                const textColor = getTextColor(snakeColor); // Determine text color based on background color
+                for (let j = 0; j < snakeLength; j++) {
+                    const snakeSegment = document.createElement('a');
+                    snakeSegment.className = 'snake';
+                    snakeSegment.href = snakeData[j].link;
+                    snakeSegment.textContent = snakeData[j].label;
+                    snakeSegment.style.left = (i * snakeLength * 20) + (j * 20) + 'px';
+                    snakeSegment.style.top = (Math.random() * (window.innerHeight - 20)) + 'px';
+                    snakeSegment.style.backgroundColor = snakeColor;
+                    snakeSegment.style.color = textColor; // Set text color
+                    makeDraggable(snakeSegment); // Make each link draggable
+                    document.body.appendChild(snakeSegment);
+                    snake.push(snakeSegment);
+                }
+                snakes.push(snake);
+            }
+            createFallingDots(); 
+            animateLinks(); 
+        }
+
+        function getRandomGrey() {
+            const shade = Math.floor(Math.random() * 256); 
+            return `rgb(${shade}, ${shade}, ${shade})`;
+        }
+
+        function getTextColor(backgroundColor) {
+            const rgb = backgroundColor.match(/\d+/g).map(Number);
+            const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000; // Calculate brightness
+            return brightness > 128 ? 'black' : 'white'; // Return black for light shades, white for dark shades
+        }
+
+        function makeDraggable(element) {
+            let offsetX, offsetY;
+            let dropTimeout;
+
+            element.onmousedown = function(e) {
+                // Calculate the offset to keep the cursor centered on the element
+                offsetX = e.clientX - element.getBoundingClientRect().left;
+                offsetY = e.clientY - element.getBoundingClientRect().top;
+                document.onmousemove = dragElement;
+                document.onmouseup = stopDrag;
+
+                // Set a timeout to drop the element after 2 seconds
+                dropTimeout = setTimeout(() => {
+                    stopDrag();
+                }, dropDelay);
+            };
+
+            function dragElement(e) {
+                element.style.left = e.clientX - offsetX + 'px';
+                element.style.top = e.clientY - offsetY + 'px';
+            }
+
+            function stopDrag() {
+                clearTimeout(dropTimeout); // Clear the drop timeout
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        function animateLinks() {
+            const linkMap = new Map();
+
+            // Group links by their href
+            document.querySelectorAll('.snake').forEach(link => {
+                const href = link.href;
+                if (!linkMap.has(href)) {
+                    linkMap.set(href, []);
+                }
+                linkMap.get(href).push(link);
+            });
+
+            // Animate links that share the same href
+            linkMap.forEach(links => {
+                if (links.length > 1) {
+                    links.forEach((link, index) => {
+                        const targetLink = links[5]; // Use the first link as the target
+                        const targetRect = targetLink.getBoundingClientRect();
+                        const linkRect = link.getBoundingClientRect();
+
+                        // Calculate the distance to move towards the target
+                        const targetX = targetRect.left + (targetRect.width / 2) - (linkRect.width / 2);
+                        const targetY = targetRect.top + (targetRect.height / 2) - (linkRect.height / 2);
+
+                        link.style.transition = 'transform 200s ease'; // Smooth transition
+                        link.style.transform = `translate(${targetX - linkRect.left}px, ${targetY - linkRect.top}px)`;
+                    });
+                }
+            });
+        }
+
+        function createFallingDots() {
+            for (let i = 0; i < 100; i++) { // Create 100 dots
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                const size = Math.random() * 5 + 2; // Random size
+                dot.style.width = dot.style.height = size + 'px';
+                dot.style.left = Math.random() * window.innerWidth + 'px';
+                dot.style.animationDuration = (Math.random() * 3 + 2) + 's'; // Random fall speed
+                document.body.appendChild(dot);
+            }
+        }
+
+        createSnakes();
+    </script>
+</body>
+</html>

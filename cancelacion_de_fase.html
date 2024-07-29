@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Syne Mono' rel='stylesheet'>
+    <title>Cancelación de Fase</title>
+    <style>
+        /* Existing styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* height: 100vh; */
+            font-family: 'Syne Mono';
+            background-color: #929292;
+            margin: 0;
+        }
+        
+        button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            background-color: #002a01;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-family: 'Syne Mono';
+        }
+        
+        button:hover {
+            background-color: #005904;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 300px;
+            height: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #484848;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        canvas {
+            background-color: #e3e3e3;
+            border: 1px solid #000;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            width: 100%;
+            color: #fff;
+            margin-bottom: auto;
+        }
+
+        .footer-link {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Cancelación de Fase</h1>
+    <button id="toggleButton">Start</button>
+    <button id="invertPhaseButton">Invertir</button>
+    <label for="gainSlider">Modulador:</label>
+    <input type="range" id="gainSlider" min="-3" max="3" step="0.01" value="-1">
+    <!-- <p>Use the gain slider to control the phase cancellation effect. Click the "Invert Phase" button to toggle between normal and inverted phase.</p> -->
+    <canvas id="audioCanvas" width="800" height="100"></canvas>
+
+    <div class="footer">
+        &copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" class="footer-link">kdg/dkd</a>
+        <!-- <a href="demoras.html" class="footer-link">➔ demoras</a> -->
+    </div>
+    <script>
+        const toggleButton = document.getElementById('toggleButton');
+        const gainSlider = document.getElementById('gainSlider');
+        const invertPhaseButton = document.getElementById('invertPhaseButton');
+        let audioContext, microphoneSource, gainNode, inputAnalyser, outputAnalyser;
+        let isActive = false;
+
+        toggleButton.addEventListener('click', async () => {
+            if (!isActive) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audioContext = new AudioContext();
+                    microphoneSource = audioContext.createMediaStreamSource(stream);
+                    gainNode = audioContext.createGain();
+                    gainNode.gain.value = -1; // Invert the phase
+                    microphoneSource.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    // Create AnalyserNodes
+                    inputAnalyser = audioContext.createAnalyser();
+                    outputAnalyser = audioContext.createAnalyser();
+
+                    // Connect the AnalyserNodes
+                    microphoneSource.connect(inputAnalyser);
+                    gainNode.connect(outputAnalyser);
+
+                    audioContext.resume();
+                    toggleButton.textContent = 'Stop';
+                    isActive = true;
+                    visualizeAudio(); // Start the visualization
+                } catch (error) {
+                    console.error('Error accessing microphone:', error);
+                }
+            } else {
+                audioContext.suspend();
+                toggleButton.textContent = 'Start';
+                isActive = false;
+            }
+        });
+
+        gainSlider.addEventListener('input', () => {
+            if (gainNode) {
+                gainNode.gain.value = parseFloat(gainSlider.value);
+            }
+        });
+
+        invertPhaseButton.addEventListener('click', () => {
+            if (gainNode) {
+                gainNode.gain.value *= -1;
+                gainSlider.value = gainNode.gain.value; // Update slider position
+            }
+        });
+
+        function visualizeAudio() {
+            requestAnimationFrame(visualizeAudio);
+
+            // Get the frequency data for input and output signals
+            const inputData = new Uint8Array(inputAnalyser.frequencyBinCount);
+            const outputData = new Uint8Array(outputAnalyser.frequencyBinCount);
+            inputAnalyser.getByteTimeDomainData(inputData);
+            outputAnalyser.getByteTimeDomainData(outputData);
+
+            // Get the canvas context
+            const audioCanvas = document.getElementById('audioCanvas');
+            const ctx = audioCanvas.getContext('2d');
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, audioCanvas.width, audioCanvas.height);
+
+            // Draw the input waveform in blue
+            ctx.beginPath();
+            ctx.strokeStyle = 'blue'; // Color for input
+            for (let i = 0; i < inputAnalyser.frequencyBinCount; i++) {
+                const x = (i * audioCanvas.width) / inputAnalyser.frequencyBinCount;
+            const inputHeight = (inputData[i] / 128.0) * (audioCanvas.height / 2);
+                if (i === 0) {
+                    ctx.moveTo(x, inputHeight);
+                } else {
+                    ctx.lineTo(x, inputHeight);
+                }
+            }
+            ctx.stroke();
+
+            // Draw the output waveform in red
+            ctx.beginPath();
+            ctx.strokeStyle = 'red'; // Color for output
+            for (let i = 0; i < outputAnalyser.frequencyBinCount; i++) {
+                const x = (i * audioCanvas.width) / outputAnalyser.frequencyBinCount;
+            const outputHeight = (outputData[i] / 128.0) * (audioCanvas.height / 2);
+                if (i === 0) {
+                    ctx.moveTo(x, outputHeight);
+                } else {
+                    ctx.lineTo(x, outputHeight);
+                }
+            }
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>
