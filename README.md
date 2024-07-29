@@ -1,2 +1,2 @@
 # disonancias
-sintetizadores y efectos de sonido
+testeado sintetizadores y efectos de sonido web
