@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@700" rel="stylesheet">
+<link rel="icon" href="disonancias.ico">
+  <title>sensynth</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #121212;
+      color: rgb(223, 223, 223);
+      font-family: "Silkscreen", serif;
+      margin: 0;
+    }
+    #startStopBtn {
+      background-color: #333;
+      color: rgb(223, 223, 223);
+      padding: 20px;
+      border: none;
+      /* border-radius: 30%; */
+      font-size: 24px;
+      cursor: pointer;
+      font-family: "Silkscreen", serif;
+      height: 100px;
+      width: 140px;
+      margin-top: 20%;;
+    }
+    #startStopBtn.active {
+      background-color: rgb(223, 223, 223);
+      color: #333;
+
+    }
+    footer {
+        font-size: 12px;
+        text-align: center;
+        color: #777;
+        margin-top: auto; /* Pushes footer to the bottom */
+        padding-bottom: 20px; /* Adds space from bottom */
+    }
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+    a:hover {
+        font-weight: bolder;
+        text-decoration:overline;
+    }
+
+
+    .eightbit-btn {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    font-family: "Silkscreen", serif;
+    color: white;
+    box-shadow: inset -2px -2px 0px 0px grey;
+    }
+    .eightbit-btn:hover, .eightbit-btn:focus {
+    background: #568ce2;
+    box-shadow: inset -3px -3px 0px 0px grey;
+    }
+    .eightbit-btn:active {
+    box-shadow: inset 2px 2px 0px 0px grey;
+    }
+    .eightbit-btn:before, .eightbit-btn:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    box-sizing: content-box;
+    }
+    .eightbit-btn:before {
+    top: -6px;
+    left: 0;
+    border-top: 6px black solid;
+    border-bottom: 6px black solid;
+    }
+    .eightbit-btn:after {
+    left: -6px;
+    top: 0;
+    border-left: 6px black solid;
+    border-right: 6px black solid;
+    }
+    .eightbit-btn--proceed {
+    background: black;
+    box-shadow: inset -2px -2px 0px 0px grey;
+    }
+    .eightbit-btn--proceed:hover, .eightbit-btn--proceed:focus {
+    background: #568ce2;
+    box-shadow: inset -3px -3px 0px 0px grey;
+    }
+    .eightbit-btn--proceed:active {
+    box-shadow: inset 2px 2px 0px 0px grey;
+    }
+
+    .Record {
+    background-color: #e76e55;
+    /* left: 180px; */
+    padding: 20px;
+    bottom: 20px;
+    }
+        
+  </style>
+</head>
+<body>
+  <button id="startStopBtn" class ="eightbit-btn Record">Strt</button>
+<br>
+  <footer>
+    <div onclick="alert('sensynth utiliza el giroscopio, accelerómetro y sensor de proximidad del móvil (si están disponibles) para modular el sonido de un oscilador digital. Haciendo clic en la pantalla, cambia el tipo de onda del oscilador. Puedes definir la frecuencia inicial añadiendo ?freq=440 (para 440Hz) al dominio de la página.')">sensynth</div>
+    <br>
+    &copy; 2024 <a href="https://www.edpanfleto.com/kdgdkd/" target="_self">kdgdkd</a> -  <a href="https://www.edpanfleto.com/disonancias/" target="_self">disonancias</a>
+</footer>
+  <script>
+    let audioContext;
+    let oscillator;
+    let filter;
+    let isRunning = false;
+
+// Function to get URL parameters
+function getUrlParam(name, defaultValue) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.has(name) ? parseFloat(urlParams.get(name)) : defaultValue;
+}
+
+// Set the initial frequency from URL or default to Low C (130.81 Hz)
+const initialFrequency = getUrlParam('freq', 130.81);
+
+    const startStopBtn = document.getElementById('startStopBtn');
+
+    function initAudio() {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      oscillator = audioContext.createOscillator();
+      filter = audioContext.createBiquadFilter();
+
+      oscillator.type = 'sawtooth';
+      oscillator.frequency.value = initialFrequency;
+
+
+      filter.type = 'lowpass';
+      filter.frequency.value = 1000;
+      filter.Q.value = 1;
+
+      oscillator.connect(filter).connect(audioContext.destination);
+      oscillator.start();
+    }
+
+    function startAudio() {
+      if (!isRunning) {
+        initAudio();
+        startStopBtn.textContent = 'Stop';
+        startStopBtn.classList.add('active');
+        isRunning = true;
+      } else {
+        audioContext.close();
+        startStopBtn.textContent = 'Strt';
+        startStopBtn.classList.remove('active');
+        isRunning = false;
+      }
+    }
+
+    startStopBtn.addEventListener('click', startAudio);
+// List of oscillator wave types
+const waveTypes = ["sine", "square", "sawtooth", "triangle"];
+let currentWaveIndex = 0;
+
+// Cycle through wave types on screen click
+document.body.addEventListener('click', (event) => {
+  if (event.target !== startStopBtn) { // Ensure start/stop button doesn't trigger wave change
+    currentWaveIndex = (currentWaveIndex + 1) % waveTypes.length;
+    if (oscillator) {
+      oscillator.type = waveTypes[currentWaveIndex];
+    }
+  }
+});
+
+    // Gyroscope controls cutoff and resonance
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', (event) => {
+        if (isRunning && filter) {
+          const { beta, gamma } = event; // Pitch and roll values
+          filter.frequency.value = Math.abs(gamma) * 50 + 200; // Modulate cutoff frequency
+          filter.Q.value = Math.abs(beta) / 45; // Modulate resonance
+        }
+      });
+    }
+
+    // Accelerometer controls oscillator frequency
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', (event) => {
+        if (isRunning && oscillator) {
+          const { x, y, z } = event.acceleration;
+          const acceleration = Math.sqrt(x * x + y * y + z * z);
+          oscillator.frequency.value = initialFrequency + acceleration * 10; // Modulate frequency
+        }
+      });
+    }
+
+    // Proximity sensor (if supported) controls frequency as well
+    if ('ondeviceproximity' in window) {
+      window.addEventListener('deviceproximity', (event) => {
+        if (isRunning && oscillator) {
+          const proximity = event.value;
+          oscillator.frequency.value = initialFrequency + (proximity ? proximity * 5 : 0);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

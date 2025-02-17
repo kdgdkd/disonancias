@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chau+Philomene+One:ital@0;1&family=Nova+Square&display=swap" rel="stylesheet">
+<link rel="icon" href="disonancias.ico">
+  <title>On a Beat</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      font-family: "Nova Square", sans-serif;
+      background: radial-gradient(circle, black 0%, black 100%);
+      color: white;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    #title {
+      margin-top: 20px;
+      font-size: 24px;
+      color: rgba(255, 255, 255, 0.585);
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #bpm {
+      font-size: 48px;
+      font-weight: bold;
+      margin-top: 60px;
+      color: rgba(255, 255, 255, 0.69);
+      position: absolute;
+      z-index: 2;
+      pointer-events: auto;
+    }
+
+    #bpm[contenteditable="true"] {
+      /* border: 1px dashed rgba(255, 255, 255, 0.5); */
+      padding: 5px;
+      /* background: rgba(0, 0, 0, 0.5); */
+      border-radius: 5px;
+    }
+
+    #screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: radial-gradient(circle, black 0%, black 100%);
+      transition: background 0.05s ease-out;
+      z-index: 1;
+    }
+    #footer {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  transition: opacity 0.3s;
+  z-index: 3;
+}
+
+footer.hidden {
+  opacity: 0;
+}
+
+a {
+            text-decoration: none;
+            color: inherit;
+        }
+  </style>
+</head>
+<body>
+  <div id="title">on a beat</div>
+  <div id="bpm" contenteditable="true">120 BPM</div>
+  <div id="screen"></div>
+  <footer id="footer">
+    <p><a href="/disonancias/" target="_self">&copy; 2024 disonancias</a></p>
+  </footer>
+  
+  <script>
+    const bpmDisplay = document.getElementById("bpm");
+    const screen = document.getElementById("screen");
+    let bpm = 120;
+    let isRunning = false;
+    let beatCount = 0;
+    let lastBeatTime = null;
+    let flashTimeout = null;
+    let isHolding = false;
+
+    function calculateInterval(bpm) {
+      return 60000 / bpm;
+    }
+
+    function flashScreen() {
+  const interval = calculateInterval(bpm);
+  const flashDuration = Math.min(interval * 0.6, 80); // Reduce flash duration based on BPM
+  screen.style.background = "black"; // Breve momento negro antes del flash
+
+  clearTimeout(flashTimeout);
+  flashTimeout = setTimeout(() => {
+    const color = beatCount % 4 === 0 ? "white" : "#d0d0d0"; // Blanco para beats 0, 4, 8...
+    screen.style.background = `radial-gradient(circle, ${color} 20%, black 50%)`;
+  }, flashDuration);
+}
+
+
+    function startBeats(resetTime = true) {
+  isRunning = true;
+  beatCount = 0; // Reiniciar a 0 antes de iniciar
+
+  if (resetTime) {
+    lastBeatTime = performance.now();
+  }
+
+  document.getElementById("footer").classList.add("hidden"); // Ocultar el footer
+  title.style.opacity = 0.3; // Reducir la opacidad del título
+  bpmElement.style.opacity = 0.4; // Reducir la opacidad de los BPMs
+
+
+  function tick(time) {
+    if (!isRunning) return;
+
+    const interval = calculateInterval(bpm);
+    const elapsed = time - lastBeatTime;
+
+    if (elapsed >= interval) {
+      lastBeatTime += interval;
+      beatCount++;
+      flashScreen();
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  flashScreen(); // Llama a flashScreen para que refleje el primer beat inmediatamente
+  requestAnimationFrame(tick);
+}
+
+
+
+    function stopBeats() {
+      isRunning = false;
+      beatCount = 0;
+      screen.style.background = "radial-gradient(circle, black 0%, black 100%)";
+  document.getElementById("footer").classList.remove("hidden"); // Mostrar el footer
+  title.style.opacity = 1; // Restaurar opacidad del título
+  bpmElement.style.opacity = 1; // Restaurar opacidad de los BPMs
+    }
+
+    document.body.addEventListener("mousedown", () => {
+  isHolding = true;
+  stopBeats();
+  screen.style.background = "black"; // Pantalla negra al presionar
+});
+
+    document.body.addEventListener("mouseup", () => {
+      if (isHolding) {
+        isHolding = false;
+        startBeats();
+      }
+    });
+
+    document.body.addEventListener("mousemove", (e) => {
+      if (e.buttons !== 1 || isHolding) return;
+      const movement = e.movementY;
+      bpm = Math.max(30, Math.min(300, bpm - movement / 5));
+      bpmDisplay.textContent = `${Math.round(bpm)} BPM`;
+    });
+
+    bpmDisplay.addEventListener("blur", () => {
+      const inputValue = parseInt(bpmDisplay.textContent.replace(" BPM", ""), 10);
+      if (!isNaN(inputValue) && inputValue >= 30 && inputValue <= 300) {
+        bpm = inputValue;
+        bpmDisplay.textContent = `${bpm} BPM`;
+      } else {
+        bpmDisplay.textContent = `${bpm} BPM`;
+      }
+    });
+
+    bpmDisplay.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        bpmDisplay.blur();
+        e.preventDefault();
+      }
+    });
+
+    document.body.addEventListener("touchstart", () => {
+  isHolding = true;
+  stopBeats();
+  screen.style.background = "black"; // Pantalla negra al presionar
+});
+
+    document.body.addEventListener("touchend", () => {
+      if (isHolding) {
+        isHolding = false;
+        startBeats();
+      }
+    });
+
+    document.body.addEventListener("touchmove", (e) => {
+      const touch = e.touches[0];
+      const movement = touch.clientY - (screen.dataset.lastY || touch.clientY);
+      screen.dataset.lastY = touch.clientY;
+      bpm = Math.max(30, Math.min(300, bpm - movement / 5));
+      bpmDisplay.textContent = `${Math.round(bpm)} BPM`;
+    });
+
+
+
+    const title = document.getElementById("title");
+const bpmElement = document.getElementById("bpm");
+
+title.addEventListener("click", stopBeats);
+bpmElement.addEventListener("click", stopBeats);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kelly+Slab&family=Sarpanch&display=swap" rel="stylesheet">
+    <title>Sinte Giroscopio</title>
+    <link rel="icon" href="disonancias.ico">
+    <style>
+        body {
+            font-family: "Sarpanch", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* height: 100vh; */
+            margin: 0;
+            background-color: #454545;
+            color: rgb(236, 243, 250);
+        }
+        #status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s ease-out;
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            color: #454545;
+        }
+        #toggleButton {
+            font-family: "Sarpanch", sans-serif;
+            font-weight: bold;
+            color: #eeeeee;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #797979;
+            border-radius: 12px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+            position: absolute;
+    top: 10%;
+    left: 20%;
+    align-items: center;
+            
+        }
+footer {
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <div id="status" onclick="alert('Sintetizador por giroscopio, para ser utilizado con el móvil. 2024@kdgdkd')">Esperando acceso al giroscopio...</div>
+    <button id="toggleButton">Iniciar</button>
+
+    <script>
+        let audioContext;
+        let oscillator;
+        let filter;
+        let isPlaying = false;
+        let statusElement;
+        let maxMovement;
+
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioContext.createOscillator();
+            filter = audioContext.createBiquadFilter();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1000, audioContext.currentTime);
+            filter.Q.setValueAtTime(1, audioContext.currentTime);
+
+            oscillator.connect(filter);
+            filter.connect(audioContext.destination);
+        }
+
+        function startSynth() {
+            if (!isPlaying) {
+                initAudio();
+                oscillator.start();
+                isPlaying = true;
+                document.getElementById('toggleButton').textContent = 'Parar';
+                document.getElementById('status').textContent = '··';
+                document.getElementById('status').style.backgroundColor = '#515171';
+            }
+        }
+
+        function stopSynth() {
+            if (isPlaying) {
+                oscillator.stop();
+                oscillator.disconnect();
+                filter.disconnect();
+                isPlaying = false;
+                document.getElementById('toggleButton').textContent = 'Iniciar';
+                document.getElementById('status').textContent = 'Sinte Giroscopio';
+                document.getElementById('status').style.backgroundColor = 'aliceblue';
+            }
+        }
+
+        function updateFrequency(beta) {
+            if (oscillator && isPlaying) {
+                const frequency = 110 + (beta + 90) * (660 / 180);
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            }
+        }
+
+        function updateFilter(gamma) {
+            if (filter && isPlaying) {
+                const filterFreq = Math.exp(((gamma + 90) / 180) * Math.log(10000 / 50)) * 50;
+                filter.frequency.setValueAtTime(filterFreq, audioContext.currentTime);
+            }
+        }
+
+        function moveStatus(beta, gamma) {
+            const x = Math.min(Math.max(gamma, -45), 45) * (maxMovement / 45);
+            const y = Math.min(Math.max(beta, -45), 45) * (maxMovement / 45);
+            statusElement.style.transform = `translate(calc(-50% + ${x}px), ${y}px)`;
+        }
+
+        function handleOrientation(event) {
+            updateFrequency(event.beta);        
+            updateFilter(event.gamma);
+            moveStatus(event.beta, event.gamma);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            statusElement = document.getElementById('status');
+            maxMovement = window.innerHeight / 3; // Limit movement to 1/4 of screen height
+
+            document.getElementById('toggleButton').addEventListener('click', () => {
+                if (!isPlaying) {
+                    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                        DeviceOrientationEvent.requestPermission()
+                            .then(permissionState => {
+                                if (permissionState === 'granted') {
+                                    startSynth();
+                                    window.addEventListener('deviceorientation', handleOrientation);
+                                } else {
+                                    document.getElementById('status').textContent = 'Permiso al giroscopio denegado.';
+                                }
+                            })
+                            .catch(console.error);
+                    } else {
+                        startSynth();
+                        window.addEventListener('deviceorientation', handleOrientation);
+                    }
+                } else {
+                    stopSynth();
+                    window.removeEventListener('deviceorientation', handleOrientation);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

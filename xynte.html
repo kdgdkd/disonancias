@@ -5,7 +5,7 @@
     <meta name="description" content="Síntesis desordenada">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XYnte</title>
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="disonancias.ico">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
     <style>
         body {
@@ -220,7 +220,7 @@
 <body>
     <h1 onclick="alert('x,y-nte es un sintetizador con dos osciladores, cuyas frecuencias las determinan las coordenadas del punto seleccionado en la caja.')">x,y-nte</h1>
     
-    <button id="startStopBtn">Va</button>
+    <button id="startStopBtn">Dale</button>
 
     <div id="oscillatorBox">
         <div id="clickedPoint"></div>
@@ -371,13 +371,53 @@
             const filterFrequencyInput = document.getElementById('filterFrequency');
             const filterResonanceInput = document.getElementById('filterResonance');
 
-            oscillatorBox.addEventListener("click", (event) => {
-                const rect = oscillatorBox.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
+            let isDragging = false;
 
-                updateOscillatorFrequencies(x, y);
-            });
+oscillatorBox.addEventListener("mousedown", startDragging);
+oscillatorBox.addEventListener("touchstart", startDragging, { passive: false });
+
+oscillatorBox.addEventListener("mousemove", dragPoint);
+oscillatorBox.addEventListener("touchmove", dragPoint, { passive: false });
+
+oscillatorBox.addEventListener("mouseup", stopDragging);
+oscillatorBox.addEventListener("mouseleave", stopDragging);
+oscillatorBox.addEventListener("touchend", stopDragging);
+
+function startDragging(event) {
+    event.preventDefault(); // Prevent scrolling on touch devices
+    isDragging = true;
+    updatePointPosition(event);
+}
+
+function dragPoint(event) {
+    if (isDragging) {
+        updatePointPosition(event);
+    }
+}
+
+function stopDragging() {
+    isDragging = false;
+}
+
+function updatePointPosition(event) {
+    const rect = oscillatorBox.getBoundingClientRect();
+    let x, y;
+
+    if (event.touches) {
+        x = event.touches[0].clientX - rect.left;
+        y = event.touches[0].clientY - rect.top;
+    } else {
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+    }
+
+    // Constrain the point within the box
+    x = Math.max(0, Math.min(x, rect.width));
+    y = Math.max(0, Math.min(y, rect.height));
+
+    updateOscillatorFrequencies(x, y);
+}
+
 
             startStopBtn.addEventListener("click", startStop);
 

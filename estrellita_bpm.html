@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Convergence Point</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000; /* Dark background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            cursor:none;
+        }
+
+        /* Style for the canvas */
+        #backgroundCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Style for the convergence point */
+        #convergencePoint {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background-color: black;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 231, 231, 0.8); /* Adding a glow effect */
+            transform: translate(-50%, -50%); /* Center the point around its position */
+        }
+
+        /* CSS class for gradient lines */
+        .gradient-line {
+            stroke: url(#gradient);
+            stroke-width: 1;
+        }
+
+/* CSS class for gradient animation */
+@keyframes gradientAnimation {
+    0% { stroke: #d3d3d3bd; }
+    25% { stroke: #add8e6aa; }
+    50% { stroke: #ffc0c0bc; }
+    75% { stroke: #add8e6aa; }
+    100% { stroke: #d3d3d3c5; }
+}
+
+/* Applying the gradient animation with different delays */
+.gradient-line-1 {
+    animation: gradientAnimation 4s infinite alternate;
+    animation-delay: 0.2s; /* Delay for the first line */
+}
+
+.gradient-line-2 {
+    animation: gradientAnimation 5s infinite alternate;
+    animation-delay: 0.3s; /* Delay for the second line */
+}
+
+.gradient-line-3 {
+    animation: gradientAnimation 5s infinite alternate;
+    animation-delay: 0.5s; /* Delay for the third line */
+}
+
+.gradient-line-4 {
+    animation: gradientAnimation 6s infinite alternate;
+    animation-delay: 0.7s; /* Delay for the fourth line */
+}
+
+
+    </style>
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div id="convergencePoint"></div>
+    <script>
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+        const convergencePoint = document.getElementById('convergencePoint');
+        const urlParams = new URLSearchParams(window.location.search);
+        const bpm = parseInt(urlParams.get('bpm')) || 120;
+const pixelsPerBeat = 150; // Ajusta este valor según la velocidad deseada
+const millisecondsPerBeat = 60000 / bpm;
+const pixelsPerMillisecond = pixelsPerBeat / millisecondsPerBeat;
+
+
+        const beatsPerBar = 4;
+        const millisecondsPerBar = (60000 / bpm) * beatsPerBar;
+        let lastTime = performance.now();
+
+        let centerX = window.innerWidth / 2;
+        let centerY = window.innerHeight / 2;
+
+        // Set the canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+// Function to draw lines with gradient and animation class
+function drawLines() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Define the corners
+    const corners = [
+        [0, 0],
+        [canvas.width, 0],
+        [0, canvas.height],
+        [canvas.width, canvas.height]
+    ];
+
+    // Create a function to draw a line with specified gradient animation
+    function drawLineWithGradientAnimation(startX, startY, endX, endY, animationDelay) {
+        const gradient = ctx.createLinearGradient(startX, startY, endX, endY);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+        gradient.addColorStop(0.5, '#c9deff');
+        gradient.addColorStop(1, 'rgba(192, 192, 192, 1)');
+
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Apply gradient animation class dynamically
+        ctx.canvas.classList.add('gradient-line');
+        ctx.canvas.style.setProperty('--animation-delay', animationDelay);
+    }
+
+    // Draw lines from each corner to the center with gradient and animation
+    // drawLineWithGradientAnimation(0, 0, centerX, centerY, '0.2s');
+    // drawLineWithGradientAnimation(canvas.width, 0, centerX, centerY, '0.3s');
+    // drawLineWithGradientAnimation(0, canvas.height, centerX, centerY, '0.5s');
+    // drawLineWithGradientAnimation(canvas.width, canvas.height, centerX, centerY, '0.7s');
+}
+
+
+
+        // Function to draw pulses
+        let pulses = [];
+        function drawPulses() {
+            for (let i = pulses.length - 1; i >= 0; i--) {
+                const pulse = pulses[i];
+                ctx.beginPath();
+                ctx.arc(pulse.x, pulse.y, pulse.radius, 0, Math.PI * 2, false);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${pulse.opacity})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                pulse.radius += 2;
+                pulse.opacity -= 0.02;
+
+                if (pulse.opacity <= 0) {
+                    pulses.splice(i, 1);
+                }
+            }
+        }
+
+        // Additional array to store the moving points for the new pulse effect
+        let movingPoints = [];
+        // Function to draw moving points and lines
+        function drawMovingPointsAndLines() {
+    if (movingPoints.length > 0) {
+        ctx.beginPath();
+        movingPoints.forEach((point) => {
+            // Calculate distance from the center for shiny effect
+            const distance = Math.sqrt((point.x - centerX) ** 2 + (point.y - centerY) ** 2);
+            const maxDistance = Math.sqrt((canvas.width / 2) ** 2 + (canvas.height / 2) ** 2);
+            const shineFactor = distance / maxDistance;
+
+            // Create a gradient for shiny effect
+            const gradient = ctx.createLinearGradient(centerX, centerY, point.x, point.y);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+            gradient.addColorStop(1, `rgba(192, 192, 192, ${0.5 + 0.5 * shineFactor})`); // Silver color with shine
+
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 1; // Thinner lines
+
+            // Draw line from the center to the moving point
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(point.x, point.y);
+
+            // Update point position along the line
+            point.x += point.dx;
+            point.y += point.dy;
+        });
+
+        // Draw lines connecting the moving points to each other
+        if (movingPoints.length === 4) {
+            ctx.moveTo(movingPoints[0].x, movingPoints[0].y);
+            ctx.lineTo(movingPoints[1].x, movingPoints[1].y);
+            ctx.lineTo(movingPoints[3].x, movingPoints[3].y);
+            ctx.lineTo(movingPoints[2].x, movingPoints[2].y);
+            ctx.lineTo(movingPoints[0].x, movingPoints[0].y);
+        }
+
+        ctx.closePath();
+        ctx.stroke();
+    }
+}
+
+
+        // Function to draw the gradient effect for the static lines
+        function drawStaticLinesWithGradient() {
+            // Remove this logic and use CSS for gradients and animations
+        }
+
+        // Function to draw everything
+        function drawLinesAndPulses() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the static lines with gradient effect
+            drawLines();
+
+            // Draw the moving points and their connecting lines
+            drawMovingPointsAndLines();
+
+            // Draw the expanding pulses
+            // drawPulses();
+        }
+
+        // Function to generate a new pulse effect with moving points
+        function generateMovingPoints(speed = 1) {
+    // Define the directions towards each corner
+    const directions = [
+        { dx: -speed, dy: -speed }, // top-left
+        { dx: speed, dy: -speed },  // top-right
+        { dx: -speed, dy: speed },  // bottom-left
+        { dx: speed, dy: speed }    // bottom-right
+    ];
+
+    // Create a new point moving towards each corner
+    directions.forEach(direction => {
+        movingPoints.push({
+            x: centerX,
+            y: centerY,
+            dx: direction.dx,
+            dy: direction.dy
+        });
+    });
+}
+
+        // Update the position of the convergence point
+        function updateConvergencePoint(x, y) {
+            centerX = x;
+            centerY = y;
+            convergencePoint.style.left = `${x}px`;
+            convergencePoint.style.top = `${y}px`;
+            pulses.push({ x: centerX, y: centerY, radius: 0, opacity: 1 });
+
+            
+  const intervalMs = 60000 / bpm * 4; // 120/4 beats per minute
+
+  setTimeout(() => {
+    const newX = Math.random() * canvas.width;
+    const newY = Math.random() * canvas.height;
+    updateConvergencePoint(newX, newY);
+  }, intervalMs);
+
+            // Animación para mover el cursor
+let currentX = canvas.width / 2;
+let currentY = canvas.height / 2;
+let targetX = currentX;
+let targetY = currentY;
+let elapsedTime = 0; // Tiempo acumulado
+const duration = (60000 / bpm) * 4; // Cuatro beats en milisegundos
+
+
+function moveCursor(time) {
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
+    elapsedTime += deltaTime;
+    const t = Math.min(elapsedTime / duration, 1); // Interpolation factor (0 to 1)
+
+    // Interpolate position
+    const newX = currentX + (targetX - currentX) * t;
+    const newY = currentY + (targetY - currentY) * t;
+
+    convergencePoint.style.left = `${newX}px`;
+    convergencePoint.style.top = `${newY}px`;
+
+    // Check if the cursor reached the target
+    if (elapsedTime >= duration) {
+        // Generate new target position
+        currentX = targetX;
+        currentY = targetY;
+        targetX = Math.random() * canvas.width;
+        targetY = Math.random() * canvas.height;
+        elapsedTime = 0; // Reset elapsed time
+    }
+
+    requestAnimationFrame(moveCursor);
+}
+
+
+            moveCursor();
+            }
+
+        // Event listeners for mouse movement and clicks
+        window.addEventListener('mousemove', (event) => {
+            updateConvergencePoint(event.clientX, event.clientY);
+        });
+
+        window.addEventListener('click', (event) => {
+            updateConvergencePoint(event.clientX, event.clientY);
+        });
+
+        // Animation loop
+        function animate() {
+            drawLinesAndPulses();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        const speed = 0.5; // Adjust the speed as needed
+        setInterval(() => generateMovingPoints(speed), 150);
+
+
+        function getBPMFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return parseInt(urlParams.get('bpm')) || 120; // Valor por defecto si no se especifica
+}
+// ... (resto de tu código)
+
+// Invocar la función para iniciar el movimiento aleatorio
+updateConvergencePoint(centerX, centerY);
+moveCursor(performance.now());
+    </script>
+</body>
+</html>
